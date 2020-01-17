@@ -17,3 +17,7 @@ Basic operation:
     - configs
     - et cetera
 * view `/docs/react-boilerplate` for other, generated items and `react-boilerplate` documents
+
+---
+
+<p align="center"><a href="https://github.com/manniepack/pitchingandmoaning">GitHub</a> • <a href="https://twitter.com/manniepack">Twitter</a></p>

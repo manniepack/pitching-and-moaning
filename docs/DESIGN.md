@@ -2,7 +2,8 @@
 ---
 # Pitching and Moaning 🧠
 
-![see project_root://design/poster-graphic_v1_export.png](../design/poster-graphic_v1_export.png)
+![see project_root://design/poster-graphic_v1_export.png](design/poster-graphic_v1_export.png)
+
 ## Poster Design Study
 Features of the current design, as used on the [current website](https://pitchingandmoaning.com/) and presumably the poster:
 
@@ -13,7 +14,8 @@ Features of the current design, as used on the [current website](https://pitchin
 
 The pillars going up along the side meld with the title text at the top to give the impression of a Greco-Roman pediment. The subject — the man in the middle — himself is placed over waves crashing in the background with thunder (quite oddly) crackling down a stormy, purple sky.
 
-![the poster is in an empty, white page](../design/poster-graphic_v1_website-usage.png)
+![the poster is in an empty, white page](design/poster-graphic_v1_website-usage.png)
+
 The minimalist white of the webpage creates a striking and effective form of contrast compared to the lavishly neon colors and variant, expressive lineart.
 
 ## Tasks
