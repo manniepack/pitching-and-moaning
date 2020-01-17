@@ -32,15 +32,18 @@ module.exports = options => ({
         // This is the place to add your own loaders (e.g. sass/less etc.)
         // for a list of loaders, see https://webpack.js.org/loaders/#styling
         test: /\.css$/,
-        exclude: /node_modules/,
-        use: ['style-loader', 'css-loader'],
-      },
-      {
-        // Preprocess 3rd party .css files located in node_modules
-        test: /\.css$/,
         include: /node_modules/,
         use: ['style-loader', 'css-loader'],
       },
+      // Disabled: not using any non-standard loaders
+      // Minimizes loader calls
+      // Change above loader's "include" to "exclude" on re-enable
+      // {
+      //   // Preprocess 3rd party .css files located in node_modules
+      //   test: /\.css$/,
+      //   include: /node_modules/,
+      //   use: ['style-loader', 'css-loader'],
+      // },
       {
         test: /\.(eot|otf|ttf|woff|woff2)$/,
         use: 'file-loader',

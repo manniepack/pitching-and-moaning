@@ -1,16 +1,16 @@
 {
-  "name": "react-boilerplate",
-  "version": "4.0.0",
-  "description": "A highly scalable, offline-first foundation with the best DX and a focus on performance and best practices",
+  "name": "pitching-and-moaning",
+  "version": "1.0.0",
+  "description": "A showpage built for www.pitchingandmoaning.com using react-boilerplate",
   "repository": {
     "type": "git",
-    "url": "git://github.com/react-boilerplate/react-boilerplate.git"
+    "url": "git://github.com/manniepack/pitching-and-moaning.git"
   },
   "engines": {
     "npm": ">=5",
     "node": ">=8.15.1"
   },
-  "author": "Max Stoiber",
+  "author": "@manniepack",
   "license": "MIT",
   "scripts": {
     "analyze:clean": "rimraf stats.json",
