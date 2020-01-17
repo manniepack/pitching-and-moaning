@@ -1,3 +1,7 @@
+# Don't check auto-generated stuff into git
+coverage
+build
+stats.json
 
 # Created by https://www.gitignore.io/api/vim,node,react,macos,emacs,windows,intellij,notepadpp,sublimetext,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=vim,node,react,macos,emacs,windows,intellij,notepadpp,sublimetext,visualstudiocode
