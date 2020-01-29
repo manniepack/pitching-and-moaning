@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import 'sanitize.css/sanitize.css';
 
 const GlobalStyle = createGlobalStyle`
   html,
