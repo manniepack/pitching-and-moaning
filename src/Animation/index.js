@@ -17,8 +17,29 @@ class Animation extends React.Component {
   constructor(props) {
     super(props);
 
+    this.__FPS = 30;
+    this.updateDelta = this.updateDelta.bind(this);
+
     // TODO: set timer for delta
-    this.state = { delta: undefined };
+    this.state = {
+      delta: null,
+      lastTimestamp: null,
+      deltaTimerID: window.setInterval(this.updateDelta, 1000 / this.__FPS),
+    };
+  }
+
+  componentWillUnmount() {
+    window.clearInterval(this.state.deltaTimerID);
+  }
+
+  updateDelta() {
+    const timestamp = Date.now();
+    const timeElapsed = timestamp - this.state.lastTimestamp;
+
+    this.setState({
+      delta: timeElapsed / 1000 / this.__FPS,
+      lastTimestamp: timestamp,
+    });
   }
 
   render() {
