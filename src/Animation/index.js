@@ -14,34 +14,6 @@ import LAYER__4_SKY from './Layer__4_Sky';
   */
 class Animation extends React.Component {
 
-  constructor(props) {
-    super(props);
-
-    this.__FPS = 30;
-    this.updateDelta = this.updateDelta.bind(this);
-
-    // TODO: set timer for delta
-    this.state = {
-      delta: null,
-      lastTimestamp: null,
-      deltaTimerID: window.setInterval(this.updateDelta, 1000 / this.__FPS),
-    };
-  }
-
-  componentWillUnmount() {
-    window.clearInterval(this.state.deltaTimerID);
-  }
-
-  updateDelta() {
-    const timestamp = Date.now();
-    const timeElapsed = timestamp - this.state.lastTimestamp;
-
-    this.setState({
-      delta: timeElapsed / 1000 / this.__FPS,
-      lastTimestamp: timestamp,
-    });
-  }
-
   render() {
 
     const style = {
@@ -57,10 +29,10 @@ class Animation extends React.Component {
         id='animation'
         style={style}
       >
-        <LAYER__1_FRAME delta={this.state.delta} />
-        <LAYER__2_CHARACTER delta={this.state.delta} />
-        <LAYER__3_WAVES delta={this.state.delta} />
-        <LAYER__4_SKY delta={this.state.delta} />
+        <LAYER__1_FRAME />
+        <LAYER__2_CHARACTER />
+        <LAYER__3_WAVES />
+        <LAYER__4_SKY />
       </div>
     );
   }
