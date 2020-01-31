@@ -29,6 +29,10 @@ class App extends React.Component {
     const size = this.state.size;
     const screenSize = [window.innerWidth, window.innerHeight];
 
+    // TODO:
+    // Remember, eventually the animation size
+    // will depend on the parent container, and 
+    // not the whole screen size.
     if (screenSize[0] > screenSize[1]) {
 
       // height is the smaller dimension
