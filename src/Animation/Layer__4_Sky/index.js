@@ -1,9 +1,9 @@
 import React from 'react';
 import Layer from '../Layer';
-import Image__Frame from './frame.png';
+import Image__Frame from './sky.png';
 
 // delta= float
-class Layer__1_Frame extends React.Component {
+class LAYER__4_SKY extends React.Component {
 
   constructor(props) {
     super(props);
@@ -28,13 +28,13 @@ class Layer__1_Frame extends React.Component {
     this.animate();
 
     return <Layer
-      id='animation__frame'
+      id='animation__sky'
       position={this.state.position}
       rotation={this.state.rotation}
       image={Image__Frame}
-      depth={9}
+      depth={3}
     />
   }
 }
 
-export default Layer__1_Frame;
+export default LAYER__4_SKY;
