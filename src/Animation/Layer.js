@@ -4,18 +4,17 @@ import React from 'react';
 // position= arr[int, int]
 // rotation= int:deg
 // image= string:url
+// depth= int
 function Layer(props) {
 
-  // TODO:
-  // soon use props.position and
-  // props.rotation to apply tra-
-  // nsformations.
+  const { depth, image, position, rotation } = props;
   const style = {
     position: 'absolute',
-    zIndex: props.depth,
+    zIndex: depth,
     width: '100%',
     height: '100%',
-    background: `url(${props.image}) no-repeat center / cover`,
+    background: `url(${image}) no-repeat center / cover`,
+    transform: `translate(${position[0]}px, ${position[1]}px) rotate(${rotation}deg)`,
   }
 
   return <div
