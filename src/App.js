@@ -1,43 +1,50 @@
 import React from 'react';
 import Animation from './Animation';
 
-function getAnimationSize(canvasSize, screenSize, aspectRatio=null) {
-  if (!aspectRatio) aspectRatio = canvasSize[0] / canvasSize[1];
+class App extends React.Component {
 
-  if (screenSize[0] > screenSize[1]) {
+  constructor(props) {
+    super(props);
 
-    // height is the smaller dimension
-    return [screenSize[1] * aspectRatio, screenSize[1]];
-  } else {
+    this.__CANVAS_SIZE = [3200, 2320];
+    this.__ASPECT_RATIO = this.__CANVAS_SIZE[0] / this.__CANVAS_SIZE[1];
 
-    // width is the smaller dimension
-    return [screenSize[0], screenSize[0] * aspectRatio];
+    this.fitAnimationToScreen = this.fitAnimationToScreen.bind(this);
+
+    this.state = {
+      size: [0, 0],
+    };
   }
-}
 
-/**
-  * For now, the App component only acts
-  * to load the Animation component. As
-  * the app progresses, I'll think about
-  * adding other buttons, interactions,
-  * and pages. For now, this is fine.
-  */
-function App() {
+  componentDidMount() {
+    window.addEventListener('resize', this.fitAnimationToScreen);
+    this.fitAnimationToScreen();
+  }
 
-  const screenSize = [
-    window.innerWidth,
-    window.innerHeight
-  ];
-  const canvasSize = [3200, 2320];
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.fitAnimationToScreen);
+  }
 
-  const size = getAnimationSize(canvasSize, screenSize);
-  console.log({ canvasSize, screenSize, size });
-  
-  // We'd like to check for window resizes
-  // here. The Animation component should
-  // attempt to maintain the aspect ratio
-  // while staying in the viewport.
-  return <Animation size={size} />;
+  fitAnimationToScreen() {
+    const size = this.state.size;
+    const screenSize = [window.innerWidth, window.innerHeight];
+
+    if (screenSize[0] > screenSize[1]) {
+
+      // height is the smaller dimension
+      size[0] = screenSize[1] * this.__ASPECT_RATIO
+      size[1] = screenSize[1];
+    } else {
+
+      // width is the smaller dimension
+      size[0] = screenSize[0];
+      size[1] = screenSize[0] * this.__ASPECT_RATIO;
+    }
+
+    this.setState({ size });
+  }
+
+  render = () => <Animation size={this.state.size} />;
 }
 
 export default App;
