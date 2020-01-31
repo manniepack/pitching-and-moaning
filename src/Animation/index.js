@@ -27,8 +27,8 @@ class Animation extends React.Component {
       position: 'relative',
       margin: '0 auto',
       zIndex: 1,
-      width: this.props.size[0],
-      height: this.props.size[1],
+      width: `${this.props.size[0]}px`,
+      height: `${this.props.size[1]}px`,
     };
 
     return (
