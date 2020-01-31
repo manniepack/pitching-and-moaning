@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.js": "/pitching-and-moaning/static/js/main.452cfa1f.chunk.js",
+    "main.js.map": "/pitching-and-moaning/static/js/main.452cfa1f.chunk.js.map",
+    "runtime-main.js": "/pitching-and-moaning/static/js/runtime-main.3d9bcc5c.js",
+    "runtime-main.js.map": "/pitching-and-moaning/static/js/runtime-main.3d9bcc5c.js.map",
+    "static/css/2.bb342caa.chunk.css": "/pitching-and-moaning/static/css/2.bb342caa.chunk.css",
+    "static/js/2.6b2b0904.chunk.js": "/pitching-and-moaning/static/js/2.6b2b0904.chunk.js",
+    "static/js/2.6b2b0904.chunk.js.map": "/pitching-and-moaning/static/js/2.6b2b0904.chunk.js.map",
+    "index.html": "/pitching-and-moaning/index.html",
+    "precache-manifest.7420fa1bdc2450e28ec57e9558f5f2d6.js": "/pitching-and-moaning/precache-manifest.7420fa1bdc2450e28ec57e9558f5f2d6.js",
+    "service-worker.js": "/pitching-and-moaning/service-worker.js",
+    "static/css/2.bb342caa.chunk.css.map": "/pitching-and-moaning/static/css/2.bb342caa.chunk.css.map",
+    "static/js/2.6b2b0904.chunk.js.LICENSE": "/pitching-and-moaning/static/js/2.6b2b0904.chunk.js.LICENSE",
+    "static/media/character.png": "/pitching-and-moaning/static/media/character.fb08426a.png",
+    "static/media/frame.png": "/pitching-and-moaning/static/media/frame.dec1523f.png",
+    "static/media/sky.png": "/pitching-and-moaning/static/media/sky.9732eac6.png",
+    "static/media/waves_0-1.png": "/pitching-and-moaning/static/media/waves_0-1.55ccc6d7.png",
+    "static/media/waves_0-2.png": "/pitching-and-moaning/static/media/waves_0-2.1a2f09ae.png",
+    "static/media/waves_1-1.png": "/pitching-and-moaning/static/media/waves_1-1.a8186484.png",
+    "static/media/waves_2-1.png": "/pitching-and-moaning/static/media/waves_2-1.5abc472a.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.3d9bcc5c.js",
+    "static/css/2.bb342caa.chunk.css",
+    "static/js/2.6b2b0904.chunk.js",
+    "static/js/main.452cfa1f.chunk.js"
+  ]
+}
