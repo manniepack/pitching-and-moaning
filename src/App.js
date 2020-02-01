@@ -7,7 +7,6 @@ class App extends React.Component {
     super(props);
 
     this.__CANVAS_SIZE = [3200, 2320];
-    this.__ASPECT_RATIO = this.__CANVAS_SIZE[0] / this.__CANVAS_SIZE[1];
 
     this.fitAnimationToScreen = this.fitAnimationToScreen.bind(this);
 
@@ -36,13 +35,13 @@ class App extends React.Component {
     if (screenSize[0] > screenSize[1]) {
 
       // height is the smaller dimension
-      size[0] = screenSize[1] * this.__ASPECT_RATIO
+      size[0] = screenSize[1] * this.__CANVAS_SIZE[0] / this.__CANVAS_SIZE[1];
       size[1] = screenSize[1];
     } else {
 
       // width is the smaller dimension
       size[0] = screenSize[0];
-      size[1] = screenSize[0] * this.__ASPECT_RATIO;
+      size[1] = screenSize[0] * this.__CANVAS_SIZE[1] / this.__CANVAS_SIZE[0];
     }
 
     this.setState({ size });
