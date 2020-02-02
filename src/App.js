@@ -3,51 +3,33 @@ import Animation from './Animation';
 
 class App extends React.Component {
 
-  constructor(props) {
-    super(props);
+  render() {
 
-    this.__CANVAS_SIZE = [3200, 2320];
-
-    this.fitAnimationToScreen = this.fitAnimationToScreen.bind(this);
-
-    this.state = {
-      size: [0, 0],
-    };
+    /**
+     * Now that I've already built the basic
+     * animation a number of times as test,
+     * I can begin to design and implement a
+     * more complete, final version with all
+     * the bells, whistles, and expectations
+     * of a finished product.
+     * 
+     * Some tasks:
+     *  1. Finalize animated interactions
+     *     and designs.
+     *  2. Split design into final pieces.
+     *  3. Map out animation containers.
+     *  4. Map out interactions.
+     *  5. Design any other UI elements:
+     *    a. Navigation?
+     *    b. Reference and other links?
+     *  6. Don't forget about parallax!
+     */
+    return (
+      <div id="app">
+        <Animation className="column" />
+      </div>
+    );
   }
-
-  componentDidMount() {
-    window.addEventListener('resize', this.fitAnimationToScreen);
-    this.fitAnimationToScreen();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.fitAnimationToScreen);
-  }
-
-  fitAnimationToScreen() {
-    const size = this.state.size;
-    const screenSize = [window.innerWidth, window.innerHeight];
-
-    // TODO:
-    // Remember, eventually the animation size
-    // will depend on the parent container, and 
-    // not the whole screen size.
-    if (screenSize[0] > screenSize[1]) {
-
-      // height is the smaller dimension
-      size[0] = screenSize[1] * this.__CANVAS_SIZE[0] / this.__CANVAS_SIZE[1];
-      size[1] = screenSize[1];
-    } else {
-
-      // width is the smaller dimension
-      size[0] = screenSize[0];
-      size[1] = screenSize[0] * this.__CANVAS_SIZE[1] / this.__CANVAS_SIZE[0];
-    }
-
-    this.setState({ size });
-  }
-
-  render = () => <Animation size={this.state.size} />;
 }
 
 export default App;
