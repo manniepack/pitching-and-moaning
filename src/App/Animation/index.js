@@ -4,74 +4,71 @@ import { POLICY, Size, getScaledRect } from 'adaptive-scale/lib-esm';
 
 class Animation extends React.Component {
 
+  /**
+   * 
+   * @param {*} props 
+   * @param {Size} props.parentSize
+   */
   constructor(props) {
     super(props);
 
+    this.generateSprites = this.generateSprites.bind(this);
+
+    /**
+     * CANVAS_SIZE are the dimensions the original
+     * poster (and) animation were designed for.
+     * 
+     * This is the size the animation is rendered
+     * to before being scaled using
+     * this.props.parentSize.
+     */
     this.CANVAS_SIZE = new Size(3200, 2320);
 
-    this.animRootElem = React.createRef();
-    this.updateAnimationSize = this.updateAnimationSize.bind(this);
-    this.pixiApp = {
+    /**
+     * animRootElem is a DOM reference to the base
+     * canvas element within which Pixi.js operates.
+     */
+    this.ANIMATION_ROOT = React.createRef();
+    this.PIXI_APP = {
       renderer: new PIXI.autoDetectRenderer({
         antialias: true,
-        transparent: false,
-        background: 0x000,
+        transparent: true,
+        autoDensity: true,
       }),
       stage: new PIXI.Container(),
       ticker: new PIXI.Ticker(),
+      sprites: null,
     };
-
-    this.state = { animationSize: this.CANVAS_SIZE };
   }
 
-  updateAnimationSize() {
-    const { renderer } = this.pixiApp;
+  generateSprites() {
+    const { PIXI_APP } = this;
 
-    const newSize = getScaledRect({
-      container: this.props.parentSize,
-      target: this.CANVAS_SIZE,
-      policy: POLICY.ShowAll,
-    });
-    const prevSize = this.state.animationSize;
-
-    if (
-      newSize.width === prevSize.width &&
-      newSize.height === prevSize.height
-    ) return;
-
-    const animationSize = newSize;
-    renderer.resize(animationSize.width, animationSize.height);
-    this.setState({ animationSize });
+    // TODO: Again, dynamic spritesheet based on res please
+    // const sheet = PIXI.Loader.shared.resources[null].spritesheet;
   }
 
   componentDidMount() {
-    const { renderer, stage, ticker } = this.pixiApp;
+    const { renderer, stage, ticker } = this.PIXI_APP;
 
-    this.updateAnimationSize();
+    // (Async)
+    // Fire sprite generation off
+    // TODO: Determine which spritesheet to load (based on res)
+    // PIXI.Loader.shared.add(null).load(this.generateSprites);
 
+    // Begin firing engine updates
     ticker.add(() => {
       renderer.render(stage);
     }, PIXI.UPDATE_PRIORITY.LOW);
     ticker.start();
 
-    this.animRootElem.appendChild(renderer.view);
+    // Add scene/animation to DOM
+    this.ANIMATION_ROOT.appendChild(renderer.view);
   }
 
   componentWillUnmount() {
-    this.pixiApp.ticker.stop();
-    this.pixiApp.renderer.stop();
-  }
-
-  componentDidUpdate(prevProps) {
-    const prevParentSize = prevProps.parentSize;
-    const nextParentSize = this.props.parentSize;
-
-    if (
-      prevParentSize.width === nextParentSize.width &&
-      prevParentSize.height === nextParentSize.height
-    ) return;
-
-    this.updateAnimationSize();
+    this.PIXI_APP.ticker.stop();
+    this.PIXI_APP.renderer.stop();
   }
 
   render() {
@@ -84,8 +81,8 @@ class Animation extends React.Component {
       justifyContent: 'center',
     };
 
-    return <div style={parentStyle} ref={elem => this.animRootElem = elem} />;
+    return <div style={parentStyle} ref={elem => this.ANIMATION_ROOT = elem} />;
   }
 }
 
-export default Animation
+export default Animation;

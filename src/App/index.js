@@ -14,6 +14,13 @@ class App extends React.Component {
     };
   }
 
+  /**
+   * This function is (debounced and) re-run
+   * each time the browser window changes size.
+   * 
+   * Sets `this.state.windowSize` to current
+   * browser viewport size as a Size() object.
+   */
   setWindowSize() {
     const newWindowSize = new Size(window.innerWidth, window.innerHeight);
     const prevWindowSize = this.state.windowSize;
@@ -38,26 +45,11 @@ class App extends React.Component {
   render() {
 
     /**
-     * Now that I've already built the basic
-     * animation a number of times as test,
-     * I can begin to design and implement a
-     * more complete, final version with all
-     * the bells, whistles, and expectations
-     * of a finished product.
-     * 
-     * Some tasks:
-     *  1. Finalize animated interactions
-     *     and designs.
-     *  2. Split design into final pieces.
-     *  3. Map out animation containers.
-     *  4. Map out interactions.
-     *  5. Design any other UI elements:
-     *    a. Navigation?
-     *    b. Reference and other links?
-     *  6. Don't forget about parallax!
+     * The main animation component expects a
+     * parentSize prop of Size() in order to
+     * contrain itself within the viewport.
      */
-
-     return <Animation parentSize={this.state.windowSize} />;
+    return <Animation parentSize={this.state.windowSize} />;
   }
 }
 
