@@ -1,0 +1,33 @@
+{
+	"meta": {
+		"image": "spritesheetHQ.png",
+		"size": {"w":8192,"h":4096},
+		"scale": "1"
+	},
+	"frames": {
+		"frame.png":
+		{
+			"frame": {"x":0,"y":0,"w":3200,"h":2320},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":3200,"h":2320},
+			"sourceSize": {"w":3200,"h":2320}
+		},
+		"sky.png":
+		{
+			"frame": {"x":3200,"y":0,"w":3200,"h":2320},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":3200,"h":2320},
+			"sourceSize": {"w":3200,"h":2320}
+		},
+		"char.png":
+		{
+			"frame": {"x":0,"y":2320,"w":1178,"h":1327},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":1178,"h":1327},
+			"sourceSize": {"w":1178,"h":1327}
+		}
+	}
+}
