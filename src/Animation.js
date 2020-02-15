@@ -11,9 +11,10 @@ class Animation extends React.Component {
   constructor(props) {
     super(props);
 
-    this.generateSprites = this.generateSprites.bind(this);
     this.getRendererSize = this.getRendererSize.bind(this);
     this.updateAnimationSize = this.updateAnimationSize.bind(this);
+    this.loadAnimationAssets = this.loadAnimationAssets.bind(this);
+    this.generateSprites = this.generateSprites.bind(this);
 
     /**
      * CANVAS_SIZE are the dimensions the original
@@ -24,30 +25,52 @@ class Animation extends React.Component {
      * this.props.parentSize.
      */
     this.CANVAS_SIZE = new Size(3200, 2320);
-    
+
+    /**
+     * Quick method to generate assets (images,
+     * spritesheets, fonts, et cetera) URLS.
+     * 
+     * For use mostly in PIXI.Loader, e.g.:
+     * 
+     *   const { ASSET } = this;
+     *   PIXI.Loader.shared
+     *     .add(ASSET('spritesheet.json'))
+     *     .add(ASSET('image.png'))
+     *     .load(onLoad);
+     */
+    this.ASSET = p => `/animation_assets/${p}`;
+
     /**
      * ANIMATION_ROOT is a DOM reference to the base
      * canvas element within which Pixi.js operates.
      */
     this.ANIMATION_ROOT = React.createRef();
+
+    const rendererSize = this.getRendererSize(props.parentSize, this.CANVAS_SIZE);
     this.PIXI_APP = {
       renderer: new PIXI.autoDetectRenderer({
         antialias: true,
-        resolution: 2,
+        autoDensity: true,
+        resolution: window.devicePixelRatio,
         /**
          * Here I'm programmatically switching anim-
          * ation colors based on runtime environment.
+         * 
+         * A dark background makes visualizing where
+         * the stages ends easier.
          */
         backgroundColor: (process.env.NODE_ENV === 'development' ?
           (0x7b7b7b) :
           (0xffffff)
         ),
+        width: rendererSize.width,
+        height: rendererSize.height,
       }),
       stage: new PIXI.Container({
         interactive: true,
       }),
       ticker: new PIXI.Ticker(),
-      animationFrame: 0,
+      sprites: {},
     };
   }
 
@@ -55,20 +78,15 @@ class Animation extends React.Component {
     const { renderer, stage, ticker } = this.PIXI_APP;
 
     /**
-     * (async)
-     * Load spritesheet and fire asset generator.
-     * 
-     * TODO: consider using a downscaled sprite-
-     * sheet based on parentSize.
+     * TODO: Redo asset loading state
+     *
+     * Considering intitializing
      */
-    const spriteURI = 'spritesheetHQ.json';
-    PIXI.Loader.shared
-      .add(spriteURI)
-      .load(() => this.generateSprites(spriteURI));
+    this.loadAnimationAssets();
 
     ticker.add(
       () => { renderer.render(stage); },
-      PIXI.UPDATE_PRIORITY.LOW
+      PIXI.UPDATE_PRIORITY.HIGH
     );
 
     ticker.start();
@@ -76,9 +94,12 @@ class Animation extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    const prevParentSize = prevProps.parentSize;
+    const { parentSize } = this.props;
+
     if (
-      prevProps.parentSize.width === this.props.parentSize.width &&
-      prevProps.parentSize.height === this.props.parentSize.height
+      prevParentSize.width === parentSize.width &&
+      prevParentSize.height === parentSize.height
     ) return;
 
     this.updateAnimationSize();
@@ -86,7 +107,7 @@ class Animation extends React.Component {
 
   componentWillUnmount() {
     this.PIXI_APP.ticker.stop();
-    this.PIXI_APP.renderer.stop();
+    this.PIXI_APP.renderer.destroy(true);
   }
 
   render() {
@@ -102,10 +123,10 @@ class Animation extends React.Component {
     return <div style={parentStyle} ref={elem => this.ANIMATION_ROOT = elem} />;
   }
 
-  getRendererSize() {
+  getRendererSize(container=this.props.parentSize, target=this.CANVAS_SIZE) {
     return getScaledRect({
-      container: this.props.parentSize,
-      target: this.CANVAS_SIZE,
+      container,
+      target,
       policy: POLICY.ShowAll,
     });
   }
@@ -114,104 +135,151 @@ class Animation extends React.Component {
     const { renderer, stage } = this.PIXI_APP;
     const { width, height } = this.getRendererSize();
 
-    renderer.resize(width, height);
     stage.width = width;
     stage.height = height;
+    renderer.resize(width, height);
   }
 
-  generateSprites(spriteURI) {
-    const { stage, ticker } = this.PIXI_APP;
-    const sheet = PIXI.Loader.shared.resources[spriteURI].spritesheet;
+  loadAnimationAssets() {
+    const { ASSET } = this;
 
-    const sky = new PIXI.Sprite(sheet.textures['sky.png']);
-    const sea_1 = new PIXI.Sprite(sheet.textures['sea_1.png']);
-    const sea_2 = new PIXI.Sprite(sheet.textures['sea_2.png']);
-    const sea_3 = new PIXI.Sprite(sheet.textures['sea_3.png']);
-    const sea_4 = new PIXI.Sprite(sheet.textures['sea_4.png']);
-    const char_sclera = new PIXI.Sprite(PIXI.Texture.WHITE);
-    const eye_left = new PIXI.Sprite(sheet.textures['eye_left.png']);
-    const eye_right = new PIXI.Sprite(sheet.textures['eye_right.png'])
-    const char = new PIXI.Sprite(sheet.textures['char.png']);
-    const frame = new PIXI.Sprite(sheet.textures['frame.png']);
+    PIXI.Loader.shared
+      .add(ASSET('frame.png'))
+      .add(ASSET('sky.png'))
+      .add(ASSET('ss_char.json'))
+      .add(ASSET('ss_sea.json'))
+      .load(this.generateSprites);
+  }
+
+  generateSprites() {
+    const { ASSET } = this;
+    const { stage, ticker } = this.PIXI_APP;
+    const loader = PIXI.Loader.shared;
+
+    const frame = new PIXI.Sprite(loader.resources[ASSET('frame.png')].texture);
+    const sky = new PIXI.Sprite(loader.resources[ASSET('sky.png')].texture);
+
+    const ss_sea = loader.resources[ASSET('ss_sea.json')].spritesheet.textures;
+    const wave_1 = new PIXI.Sprite(ss_sea['wave_1.png']);
+    const wave_2 = new PIXI.Sprite(ss_sea['wave_2.png']);
+    const wave_3 = new PIXI.Sprite(ss_sea['wave_3.png']);
+    const wave_4 = new PIXI.Sprite(ss_sea['wave_4.png']);
+
+    const ss_char = loader.resources[ASSET('ss_char.json')].spritesheet.textures;
+    const char_eye_sclera = new PIXI.Sprite(PIXI.Texture.WHITE);
+    const char_eye_left = new PIXI.Sprite(ss_char['eye_left.png']);
+    const char_eye_right = new PIXI.Sprite(ss_char['eye_right.png']);
+    const char = new PIXI.Sprite(ss_char['char.png']);
 
     stage.addChild(sky);
-    stage.addChild(sea_4);
-    stage.addChild(sea_3);
-    stage.addChild(sea_2);
-    stage.addChild(sea_1);
-    stage.addChild(char_sclera);
-    stage.addChild(eye_left);
-    stage.addChild(eye_right);
+    stage.addChild(wave_1);
+    stage.addChild(wave_2);
+    stage.addChild(wave_3);
+    stage.addChild(wave_4);
+    stage.addChild(char_eye_sclera);
+    stage.addChild(char_eye_left);
+    stage.addChild(char_eye_right);
     stage.addChild(char);
     stage.addChild(frame);
 
-    sea_4.anchor.set(0.5);
-    sea_4.position.set(2444.50, 1386.50);
+    wave_1.anchor.set(0.5);
+    wave_1.position.set(2444.50, 1386.50);
 
-    sea_3.anchor.set(0.5);
-    sea_3.position.set(823.50, 1253.50);
+    wave_2.anchor.set(0.5);
+    wave_2.position.set(823.50, 1253.50);
 
-    sea_2.anchor.set(0.5);
-    sea_2.position.set(1686.50, 1545.50);
+    wave_3.anchor.set(0.5);
+    wave_3.position.set(1686.50, 1545.50);
 
-    sea_1.anchor.set(0.5);
-    sea_1.position.set(954, 1604);
+    wave_4.anchor.set(0.5);
+    wave_4.position.set(954, 1604);
 
-    char_sclera.width = 221;
-    char_sclera.height = 79;
-    char_sclera.anchor.set(0.5); 
-    char_sclera.position.set(1610.50, 1023.50);
+    char_eye_sclera.width = 221;
+    char_eye_sclera.height = 79;
+    char_eye_sclera.anchor.set(0.5); 
+    char_eye_sclera.position.set(1610.50, 1023.50);
 
-    eye_left.CENTER = { x: 1545, y: 1024.50 };
-    eye_left.anchor.set(0.5);
-    eye_left.position.set(eye_left.CENTER.x, eye_left.CENTER.y);
+    char_eye_left.CENTER = { x: 1545, y: 1024.50 };
+    char_eye_left.anchor.set(0.5);
+    char_eye_left.position.set(char_eye_left.CENTER.x, char_eye_left.CENTER.y);
 
-    eye_right.CENTER = { x: 1679.50, y: 1023.50 };
-    eye_right.anchor.set(0.5);
-    eye_right.position.set(eye_right.CENTER.x, eye_right.CENTER.y);
+    char_eye_right.CENTER = { x: 1679.50, y: 1023.50 };
+    char_eye_right.anchor.set(0.5);
+    char_eye_right.position.set(char_eye_right.CENTER.x, char_eye_right.CENTER.y);
 
+    /**
+     * char
+     */
     char.anchor.set(0.5);
     char.position.set(1611, 1385.50);
     char.cursor = 'pointer';
     char.interactive = true;
-    char.on('mouseover', e => {
-      char.texture = sheet.textures['char_hover.png'];
+
+    const char_hover = e => {
+      char.texture = ss_char['char_hover.png'];
       char.anchor.set(0.5);
       char.position.set(1611, 1381.90);
-    });
-    char.on('mouseout', e => {
-      char.texture = sheet.textures['char.png'];
+    };
+    char.on('mouseover', char_hover);
+
+    const char_default = e => {
+      char.texture = ss_char['char.png'];
       char.anchor.set(0.5);
       char.position.set(1611, 1385.50);
-    });
+    }
+    char.on('mouseout', char_default);
 
-    sea_1.CHANGE = 0;
-    sea_2.CHANGE = 0;
-    sea_3.CHANGE = 0;
-    sea_4.CHANGE = 0;
+    /**
+     * wave_*
+     */
+    wave_1.CHANGE = 0;
+    wave_2.CHANGE = 0;
+    wave_3.CHANGE = 0;
+    wave_4.CHANGE = 0;
     ticker.add(
       () => {
-        if (sea_1.CHANGE > PIXI.PI_2) sea_1.CHANGE = 0;
-        if (sea_2.CHANGE > PIXI.PI_2) sea_2.CHANGE = 0;
-        if (sea_3.CHANGE > PIXI.PI_2) sea_3.CHANGE = 0;
-        if (sea_4.CHANGE > PIXI.PI_2) sea_4.CHANGE = 0;
+        if (wave_1.CHANGE > PIXI.PI_2) wave_1.CHANGE = 0;
+        if (wave_2.CHANGE > PIXI.PI_2) wave_2.CHANGE = 0;
+        if (wave_3.CHANGE > PIXI.PI_2) wave_3.CHANGE = 0;
+        if (wave_4.CHANGE > PIXI.PI_2) wave_4.CHANGE = 0;
 
-        sea_1.position.y += 0.2 * Math.sin(sea_1.CHANGE);
-        sea_1.rotation = 0.0300 * Math.sin(sea_1.CHANGE);
-        sea_2.position.y += 0.3 * Math.sin(sea_2.CHANGE);
-        sea_2.rotation = 0.0225 * Math.cos(sea_1.CHANGE);
-        sea_3.position.y += 0.1 * Math.cos(sea_3.CHANGE);
-        sea_3.rotation = 0.0125 * Math.sin(sea_1.CHANGE);
-        sea_4.position.y += 0.1 * Math.sin(sea_4.CHANGE);
-        sea_4.rotation = 0.0125 * Math.sin(sea_1.CHANGE);
+        wave_1.position.y += 0.1 * Math.sin(wave_1.CHANGE);
+        wave_1.rotation = 0.0125 * Math.sin(wave_1.CHANGE);
+        wave_2.position.y += 0.1 * Math.cos(wave_2.CHANGE);
+        wave_2.rotation = 0.0125 * Math.sin(wave_2.CHANGE);
+        wave_3.position.y += 0.3 * Math.sin(wave_3.CHANGE);
+        wave_3.rotation = 0.0225 * Math.cos(wave_3.CHANGE);
+        wave_4.position.y += 0.2 * Math.sin(wave_4.CHANGE);
+        wave_4.rotation = 0.0300 * Math.sin(wave_4.CHANGE);
 
-        sea_1.CHANGE += 0.0175;
-        sea_2.CHANGE += 0.0125;
-        sea_3.CHANGE += 0.0037;
-        sea_4.CHANGE += 0.0035;
+        wave_1.CHANGE += 0.0035;
+        wave_2.CHANGE += 0.0037;
+        wave_3.CHANGE += 0.0125;
+        wave_4.CHANGE += 0.0175;
       },
-      PIXI.UPDATE_PRIORITY.LOW
-    )
+      PIXI.UPDATE_PRIORITY.INTERACTION
+    );
+
+    this.PIXI_APP._sprites = {
+      frame,
+      char: {
+        char,
+        char_default,
+        charHover: char_hover,
+        eye: {
+          sclera: char_eye_sclera,
+          left: char_eye_left,
+          right: char_eye_right,
+        },
+      },
+      waves: {
+        1: wave_1,
+        2: wave_2,
+        3: wave_3,
+        4: wave_4,
+      },
+      sky,
+    };
 
     this.updateAnimationSize();
   }

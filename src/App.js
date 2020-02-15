@@ -32,14 +32,15 @@ class App extends React.Component {
     return <Animation parentSize={this.state.windowSize} />;
   }
 
-  /**
-   * This function is (debounced and) re-run
-   * each time the browser window changes size.
-   * 
-   * Sets `this.state.windowSize` to current
-   * browser viewport size as a Size() object.
-   */
   setWindowSize() {
+    /**
+     * This function is (debounced and) re-run
+     * each time the browser window changes size.
+     * 
+     * Sets `this.state.windowSize` to current
+     * browser viewport size as a Size() object.
+     */
+
     const newWindowSize = new Size(window.innerWidth, window.innerHeight);
     const prevWindowSize = this.state.windowSize;
 
