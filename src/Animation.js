@@ -38,7 +38,7 @@ class Animation extends React.Component {
      *     .add(ASSET('image.png'))
      *     .load(onLoad);
      */
-    this.ASSET = p => `/animation_assets/${p}`;
+    this.ASSET = p => process.env.NODE_ENV === 'development' ? `/animation_assets/${p}` : `/pitching-and-moaning/animation_assets/${p}`;
 
     /**
      * ANIMATION_ROOT is a DOM reference to the base
