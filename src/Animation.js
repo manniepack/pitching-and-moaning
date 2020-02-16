@@ -194,6 +194,8 @@ class Animation extends React.Component {
       right: '0.33em',
       fontSize: '2em',
       cursor: 'pointer',
+      color: 'transparent',
+      textShadow: '0 0 0 white',
     }
 
     return (
