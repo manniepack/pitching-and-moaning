@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/pitching-and-moaning/precache-manifest.84d794ea72a9f37505256e1123ad8285.js"
+  "/pitching-and-moaning/precache-manifest.00a3e3599acb6b9f93c637c0655a0a94.js"
 );
 
 self.addEventListener('message', (event) => {
