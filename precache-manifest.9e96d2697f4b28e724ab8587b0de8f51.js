@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "b74254cb57652a8027ec0a933ed32db0",
+    "revision": "7ef94884c0d73d0665a3e181ebf3b20b",
     "url": "/pitching-and-moaning/index.html"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/pitching-and-moaning/static/js/2.d9bf8989.chunk.js.LICENSE"
   },
   {
-    "revision": "c21b1b698b8c21a82bc5",
-    "url": "/pitching-and-moaning/static/js/main.f440e605.chunk.js"
+    "revision": "a787dfc0e3766d3aa057",
+    "url": "/pitching-and-moaning/static/js/main.e363efbf.chunk.js"
   },
   {
     "revision": "2471fb7cd64633fc9bd7",
