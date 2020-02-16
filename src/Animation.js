@@ -1,6 +1,7 @@
 import React from 'react';
 import * as PIXI from 'pixi.js';
 import { POLICY, Size, getScaledRect } from 'adaptive-scale/lib-esm';
+import ReactPlayer from 'react-player';
 
 class Animation extends React.Component {
 
@@ -11,18 +12,21 @@ class Animation extends React.Component {
   constructor(props) {
     super(props);
 
-    this.getRendererSize = this.getRendererSize.bind(this);
-    this.updateAnimationSize = this.updateAnimationSize.bind(this);
-
     this.buildAnimation = this.buildAnimation.bind(this);
     this.loadAnimationAssets = this.loadAnimationAssets.bind(this);
     this.generateSprites = this.generateSprites.bind(this);
     this.buildInteractions = this.buildInteractions.bind(this);
     this.showAnimation = this.showAnimation.bind(this);
 
+    this.stopAnimation = this.stopAnimation.bind(this);
+    this.resumeAnimation = this.resumeAnimation.bind(this);
+
+    this.getRendererSize = this.getRendererSize.bind(this);
+    this.updateAnimationSize = this.updateAnimationSize.bind(this);
+
     this.state = {
       isLoaded: false,
-      watchindVideo: false,
+      showVideo: false,
     };
 
     /**
@@ -123,25 +127,23 @@ class Animation extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     const prevParentSize = prevProps.parentSize;
     const { parentSize } = this.props;
-
     if (
       prevParentSize.width !== parentSize.width ||
       prevParentSize.height !== parentSize.height
-    ) {
-      this.updateAnimationSize();
-    }
+    ) this.updateAnimationSize();
 
     const prevLoaded = prevState.isLoaded;
     const { isLoaded } = this.state;
     if (isLoaded && !prevLoaded) {
       this.ANIMATION_ROOT.appendChild(this.PIXI_APP.renderer.view);
     }
-
-    // TODO: capture video playback (on/off)
-    // via this.state.watchingVideo
-    // create new func:
-    // stopAnimation()
-    // resumeAnimation()
+  
+    const prevShown = prevState.showVideo;
+    const shown = this.state.showVideo;
+    if (prevShown !== shown) {
+      if (shown) this.stopAnimation();
+      else this.resumeAnimation();
+    }
   }
 
   componentWillUnmount() {
@@ -149,8 +151,68 @@ class Animation extends React.Component {
     this.PIXI_APP.renderer.destroy(true);
   }
 
+  renderLoader(parentStyle) {
+    const loaderParentStyle = {
+      ...parentStyle,
+      backgroundColor: 'black',
+      color: 'white',
+    }
+    const loaderStyle = {
+      textAlign: 'center',
+    };
+
+    return (
+      <div style={loaderParentStyle}>
+        <div style={loaderStyle}>
+          ...pitching, and moaning...
+        </div>
+      </div>
+    );
+  }
+
+  renderVideo() {
+    const containerStyle = {
+      width: '100vw',
+      height: '100vh',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      color: 'white',
+    }
+    const playerStyle = {
+      display: 'inline',
+      position: 'absolute',
+      zIndex: 3,
+    };
+    const closeButtonStyle = {
+      position: 'absolute',
+      top: 0,
+      right: '0.33em',
+      fontSize: '2em',
+      cursor: 'pointer',
+    }
+
+    return (
+      <div style={containerStyle}>
+        <ReactPlayer
+          style={playerStyle}
+          url='https://vimeo.com/384489349'
+          controls
+        />
+        <div
+          style={closeButtonStyle}
+          onClick={() => this.setState({ ...this.state, showVideo: false })}
+        >✖</div>
+      </div>
+    );
+  }
+
   render() {
-    const { isLoaded } =  this.state;
+    const { isLoaded, showVideo } =  this.state;
 
     const { width, height } = this.props.parentSize;
     const parentStyle = {
@@ -162,30 +224,13 @@ class Animation extends React.Component {
       transition: 'background-color 0.5s ease-out',
     };
 
-    if (!isLoaded) {
-
-      const loaderParentStyle = {
-        ...parentStyle,
-        backgroundColor: 'black',
-        color: 'white',
-      }
-
-      const loaderStyle = {
-        textAlign: 'center',
-      };
-
-      return (
-        <div style={loaderParentStyle}>
-          <div style={loaderStyle}>
-            ...pitching, and moaning...
-          </div>
-        </div>
-      );
-    }
-
-    // TODO: use this.state.watchingVideo to 
-    // display video container
-    return <div style={parentStyle} ref={elem => this.ANIMATION_ROOT = elem} />;
+    if (!isLoaded) return this.renderLoader(parentStyle);
+    return (
+      <React.Fragment>
+        <div style={parentStyle} ref={elem => this.ANIMATION_ROOT = elem} />
+        {showVideo ? this.renderVideo() : null}
+      </React.Fragment>
+    );
   }
 
   async buildAnimation() {
@@ -220,8 +265,7 @@ class Animation extends React.Component {
      * (char._STATES.*)
      * 
      * I'm storing interactive information in
-     * _DEFAULT, _HOVER, and _CLICK on the
-     * sprite respectively.
+     * _DEFAULT, and _HOVER sprite respectively.
      * 
      * (so texture & position)
      */
@@ -239,12 +283,8 @@ class Animation extends React.Component {
           position: new PIXI.Point(1611, 1385.50),
         },
         _HOVER: {
-          texture: ss_char['char_hover.png'],
-          position: new PIXI.Point(1611, 1381.90),
-        },
-        _CLICK: {
           texture: ss_char['char_click.png'],
-          position: new PIXI.Point(0, 0), // TODO
+          position: new PIXI.Point(1611, 1341),
         },
       };
   
@@ -384,8 +424,7 @@ class Animation extends React.Component {
     char.cursor = 'pointer';
     char.on('pointerover', () => changeCharState(char, '_HOVER'));
     char.on('pointerout', () => changeCharState(char, '_DEFAULT'));
-    // char.on('pointerdown', null); TODO: onClick
-    // adjust this.state.watchingVideo
+    char.on('pointerdown', () => this.setState({ ...this.state, showVideo: true }));
 
     /**
      * Wave Interactions
@@ -473,7 +512,7 @@ class Animation extends React.Component {
 
       for (let wave in waves) {
         wave = waves[wave];
-        ticker.add(wave._ANIMATION.func);
+        ticker.add(wave._ANIMATION.func, PIXI.UPDATE_PRIORITY.INTERACTION);
       }
     })();
 
@@ -507,6 +546,14 @@ class Animation extends React.Component {
       ...this.state,
       isLoaded: true,
     });
+  }
+
+  stopAnimation() {
+    this.PIXI_APP.ticker.stop();
+  }
+
+  resumeAnimation() {
+    this.PIXI_APP.ticker.start();
   }
 
   getRendererSize(container=this.props.parentSize, target=this.CANVAS_SIZE) {
