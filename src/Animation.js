@@ -227,7 +227,7 @@ class Animation extends React.Component {
       char._STATES = {
         _DEFAULT: {
           texture: ss_char['char.png'],
-          position: [1611, 1385.50],
+          position: new PIXI.Point(1611, 1385.50),
         },
         _HOVER: {
           texture: ss_char['char_hover.png'],
@@ -333,10 +333,6 @@ class Animation extends React.Component {
       };
     }
 
-    // TODO:
-    // check for interactions
-    // * char (hover|click)
-
     const trackTargetWithEye = target => {
       for (let eye in this.PIXI_APP.sprites.char_eye) {
         if (eye === 'sclera') continue;
@@ -359,11 +355,23 @@ class Animation extends React.Component {
         }
       }
     }
-
     stage.interactive = true;
-    stage.on('mousemove', event => {
+    stage.on('pointermove', event => {
       trackTargetWithEye(screenPosToCanvas(event.data.global));
     });
+
+    const changeCharState = (char, state) => {
+      const { texture, position } = char._STATES[state];
+      char.texture = texture;
+      char.anchor.set(0.5);
+      char.position.set(position.x, position.y);
+    }
+
+    const char = sprites.char;
+    char.interactive = true;
+    char.cursor = 'pointer';
+    char.on('pointerover', () => changeCharState(char, '_HOVER'));
+    char.on('pointerout', () => changeCharState(char, '_DEFAULT'));
 
     /**
      * Wave Interactions
