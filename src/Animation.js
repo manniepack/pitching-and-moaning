@@ -152,7 +152,7 @@ class Animation extends React.Component {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      transition: 'background-color 0.3s ease-out',
+      transition: 'background-color 0.5s ease-out',
     };
 
     if (!isLoaded) {
