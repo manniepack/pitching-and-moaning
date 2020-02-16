@@ -182,11 +182,6 @@ class Animation extends React.Component {
       justifyContent: 'center',
       backgroundColor: 'rgba(0, 0, 0, 0.7)',
       color: 'white',
-    }
-    const playerStyle = {
-      display: 'inline',
-      position: 'absolute',
-      zIndex: 3,
     };
     const closeButtonStyle = {
       position: 'absolute',
@@ -201,7 +196,6 @@ class Animation extends React.Component {
     return (
       <div style={containerStyle}>
         <ReactPlayer
-          style={playerStyle}
           url='https://vimeo.com/384489349'
           controls
         />
