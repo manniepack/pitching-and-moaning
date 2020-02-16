@@ -180,7 +180,7 @@ class Animation extends React.Component {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      backgroundColor: 'black',
       color: 'white',
     };
     const closeButtonStyle = {
