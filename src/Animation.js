@@ -22,6 +22,7 @@ class Animation extends React.Component {
 
     this.state = {
       isLoaded: false,
+      watchindVideo: false,
     };
 
     /**
@@ -135,6 +136,12 @@ class Animation extends React.Component {
     if (isLoaded && !prevLoaded) {
       this.ANIMATION_ROOT.appendChild(this.PIXI_APP.renderer.view);
     }
+
+    // TODO: capture video playback (on/off)
+    // via this.state.watchingVideo
+    // create new func:
+    // stopAnimation()
+    // resumeAnimation()
   }
 
   componentWillUnmount() {
@@ -176,6 +183,8 @@ class Animation extends React.Component {
       );
     }
 
+    // TODO: use this.state.watchingVideo to 
+    // display video container
     return <div style={parentStyle} ref={elem => this.ANIMATION_ROOT = elem} />;
   }
 
@@ -359,6 +368,9 @@ class Animation extends React.Component {
     stage.on('pointermove', event => {
       trackTargetWithEye(screenPosToCanvas(event.data.global));
     });
+    stage.on('pointerdown', event => {
+      trackTargetWithEye(screenPosToCanvas(event.data.global));
+    })
 
     const changeCharState = (char, state) => {
       const { texture, position } = char._STATES[state];
@@ -372,6 +384,8 @@ class Animation extends React.Component {
     char.cursor = 'pointer';
     char.on('pointerover', () => changeCharState(char, '_HOVER'));
     char.on('pointerout', () => changeCharState(char, '_DEFAULT'));
+    // char.on('pointerdown', null); TODO: onClick
+    // adjust this.state.watchingVideo
 
     /**
      * Wave Interactions
