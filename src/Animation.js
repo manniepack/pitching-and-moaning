@@ -237,25 +237,25 @@ class Animation extends React.Component {
     wave_3.CHANGE = 0;
     wave_4.CHANGE = 0;
     ticker.add(
-      () => {
+      (time) => {
         if (wave_1.CHANGE > PIXI.PI_2) wave_1.CHANGE = 0;
         if (wave_2.CHANGE > PIXI.PI_2) wave_2.CHANGE = 0;
         if (wave_3.CHANGE > PIXI.PI_2) wave_3.CHANGE = 0;
         if (wave_4.CHANGE > PIXI.PI_2) wave_4.CHANGE = 0;
 
-        wave_1.position.y += 0.1 * Math.sin(wave_1.CHANGE);
+        wave_1.position.y += 0.23 * Math.sin(wave_1.CHANGE);
         wave_1.rotation = 0.0125 * Math.sin(wave_1.CHANGE);
         wave_2.position.y += 0.1 * Math.cos(wave_2.CHANGE);
         wave_2.rotation = 0.0125 * Math.sin(wave_2.CHANGE);
         wave_3.position.y += 0.3 * Math.sin(wave_3.CHANGE);
-        wave_3.rotation = 0.0225 * Math.cos(wave_3.CHANGE);
+        wave_3.rotation = 0.0225 * Math.sin(wave_3.CHANGE);
         wave_4.position.y += 0.2 * Math.sin(wave_4.CHANGE);
         wave_4.rotation = 0.0300 * Math.sin(wave_4.CHANGE);
 
-        wave_1.CHANGE += 0.0035;
-        wave_2.CHANGE += 0.0037;
-        wave_3.CHANGE += 0.0125;
-        wave_4.CHANGE += 0.0175;
+        wave_1.CHANGE += 0.0035 * time;
+        wave_2.CHANGE += 0.0037 * time;
+        wave_3.CHANGE += 0.0125 * time;
+        wave_4.CHANGE += 0.0175 * time;
       },
       PIXI.UPDATE_PRIORITY.INTERACTION
     );
