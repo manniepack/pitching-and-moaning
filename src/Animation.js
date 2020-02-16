@@ -349,10 +349,14 @@ class Animation extends React.Component {
         };
         const distance = Math.sqrt(Math.pow(targetVector.x, 2) + Math.pow(targetVector.y, 2));
 
-        targetVector.x = targetVector.x / distance;
-        targetVector.y = targetVector.y > 1 ? targetVector.y * 2.32 / distance : targetVector.y / distance;
-
-        eye.position.set(eye._CENTER.x + (13 * targetVector.x), eye._CENTER.y + (5 * targetVector.y));
+        if (distance < 48) {
+          eye.position.set(eye._CENTER.x, eye._CENTER.y);
+        } else {
+          targetVector.x = targetVector.x / distance;
+          targetVector.y = targetVector.y > 1 ? targetVector.y * 2.32 / distance : targetVector.y / distance;
+  
+          eye.position.set(eye._CENTER.x + (13 * targetVector.x), eye._CENTER.y + (5 * targetVector.y));
+        }
       }
     }
 
