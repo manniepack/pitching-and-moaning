@@ -214,6 +214,9 @@ class Animation extends React.Component {
     const parentStyle = {
       width,
       height,
+      position: 'absolute',
+      top: 0,
+      left: 0,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
