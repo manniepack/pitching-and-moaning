@@ -409,7 +409,7 @@ class Animation extends React.Component {
     });
     stage.on('pointerdown', event => {
       trackTargetWithEye(screenPosToCanvas(event.data.global));
-    })
+    });
 
     const changeCharState = (char, state) => {
       const { texture, position } = char._STATES[state];

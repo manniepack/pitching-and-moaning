@@ -10,12 +10,11 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import 'sanitize.css';
 
-import App from './App';
+import PitchingAndMoaning from './components/PitchingAndMoaning';
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<PitchingAndMoaning />, document.getElementById('root'));
 
 if (process.env.NODE_ENV)
   switch(process.env.NODE_ENV) {
