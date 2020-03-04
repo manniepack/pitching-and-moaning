@@ -12,7 +12,6 @@
     "pixi.js": "^5.2.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
-    "react-pixi": "^0.9.19",
     "react-player": "^1.15.2",
     "react-scripts": "3.3.0",
     "sanitize.css": "^11.0.0"

@@ -6,6 +6,7 @@ import * as PIXI from 'pixi.js';
 import { Size, getScaledRect, POLICY } from 'adaptive-scale/lib-esm';
 
 import Loader from './Loader';
+import Animation from './Animation';
 
 class PitchingAndMoaning extends React.Component {
 
@@ -26,13 +27,13 @@ class PitchingAndMoaning extends React.Component {
     policy: POLICY.ShowAll,
   });
 
-  pixi_Renderer = PIXI.autoDetectRenderer({
+  pixi_Renderer = new PIXI.autoDetectRenderer({
     antialias: true,
-    autoDensity: true,
-    sharedTicker: true,
     transparent: true,
+    autoDensity: true,
+    resolution: window.devicePixelRatio,
+    sharedTicker: true,
   });
-  pixi_RootNode = React.createRef();
   pixi_RootContainer = new PIXI.Container();
   pixi_Stage = new PIXI.Container();
 
@@ -69,7 +70,7 @@ class PitchingAndMoaning extends React.Component {
     });
   };
 
-  onWindowResize = () => debounce(() => {
+  dom_OnWindowResize = () => debounce(() => {
     const newWidth = window.innerWidth;
     const newHeight = window.innerHeight;
 
@@ -101,7 +102,7 @@ class PitchingAndMoaning extends React.Component {
     // resolution changes.
     //
     // pixi_Renderer.resolution = window.devicePixelRatio;
-  }, 333);
+  }, 333)();
 
   //
   // React.js Lifecycle Event
@@ -112,7 +113,7 @@ class PitchingAndMoaning extends React.Component {
     //
     // Bind window resize
     //
-    window.addEventListener('resize', this.onWindowResize);
+    window.addEventListener('resize', this.dom_OnWindowResize);
 
     //
     // Chain-load assets
@@ -124,11 +125,14 @@ class PitchingAndMoaning extends React.Component {
       throw err;
     }
 
+    const { pixi_RootContainer, pixi_Stage } = this;
+    pixi_RootContainer.addChild(pixi_Stage);
+
     //
     // Trigger resize logic manually once to calculate
     // proper sizes
     //
-    this.onWindowResize();
+    this.dom_OnWindowResize();
 
     //
     // Mark animation as loaded; this shows the animation
@@ -159,12 +163,17 @@ class PitchingAndMoaning extends React.Component {
     };
 
     return (
-      <div style={parentStyle} ref={elem => this.pixi_RootNode = elem}>
+      <div style={parentStyle}>
         {!isAnimationLoaded ? <Loader /> : (
+
           //
           // Render animation
           //
-          null
+          <Animation
+            renderer={this.pixi_Renderer}
+            root={this.pixi_RootContainer}
+            stage={this.pixi_Stage}
+          />
         )}
       </div>
     );
@@ -175,7 +184,7 @@ class PitchingAndMoaning extends React.Component {
   // (componentWillUnmount)
   //
   componentWillUnmount() {
-    window.removeEventListener('resize', this.onWindowResize);
+    window.removeEventListener('resize', this.dom_OnWindowResize);
     this.pixi_Renderer.destroy(true);
   }
 }
