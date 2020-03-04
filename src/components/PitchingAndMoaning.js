@@ -19,7 +19,7 @@ class PitchingAndMoaning extends React.Component {
   // that fits within our viewport without losing the
   // original design proportions/aspect ratio.
   //
-  static as_DesignSize = new Size(3200, 2320);
+  as_DesignSize = new Size(3200, 2320);
   as_GetStageSize = () => getScaledRect({
     container: new Size(window.innerWidth, window.innerHeight),
     target: this.as_DesignSize,
@@ -31,62 +31,145 @@ class PitchingAndMoaning extends React.Component {
     autoDensity: true,
     sharedTicker: true,
   });
-  pixi_Target = new PIXI.Container();
+  pixi_RootNode = React.createRef();
+  pixi_RootContainer = new PIXI.Container();
   pixi_Stage = new PIXI.Container();
 
-  pixi_LoadSpritesheets = async () => {
-    return new Promise(resolve => {
-      resolve();
+  pixi_LoadAssets = async () => {
+    const isDev = process.env.NODE_ENV === 'development';
+    const isHQ = window.devicePixelRatio > 1;
+    const loader = PIXI.Loader.shared;
+
+    const assetsPath = `${isDev ? '' : '/pitching-and-moaning'}/assets${isHQ ? '/hq' : ''}`;
+    const assets = [
+      `${assetsPath}/frame.png`,
+      `${assetsPath}/sky.png`,
+      `${assetsPath}/spritesheet_char.json`,
+      `${assetsPath}/spritesheet_waves.json`,
+      `${assetsPath}/spritesheet_lightning.json`,
+    ];
+
+    return new Promise((resolve, reject) => {
+      for (let index in assets) {
+        loader.add(assets[index]);
+      }
+
+      loader.onError.add(() => reject(assets));
+
+      loader.load((loader, resources) => {
+        resolve({ paths: assets, resources });
+      });
     });
   };
 
-  onWindowResize = (e) => debounce((e) => {
-    const { width, height } = this.state.windowSize;
+  onWindowResize = () => debounce(() => {
     const newWidth = window.innerWidth;
     const newHeight = window.innerHeight;
-    // This check may be unnecessary and omitted
-    if (width === newWidth && height === newHeight) return;
 
     //
-    // I use an adaptive scale library to scale the
-    // original design dimensions to ones that fit
-    // in our current viewport, without losing the
-    // aspect ratio. Just basic math that has been
-    // abstracted away
+    // I use an adaptive scale library to scale the original
+    // design dimensions to ones that fit in our current
+    // viewport, without losing the aspect ratio. Just
+    // basic math that has been abstracted away
     //
     const stageSize = this.as_GetStageSize(new Size(newWidth, newHeight));
+    const { pixi_Renderer, pixi_RootContainer, pixi_Stage } = this;
 
-    this.pixi_Stage.position.set(stageSize.x, stageSize.y);
-    this.pixi_Stage.width = stageSize.width;
-    this.pixi_Stage.height = stageSize.height;
+    pixi_Stage.position.set(stageSize.x, stageSize.y);
+    pixi_Stage.width = stageSize.width;
+    pixi_Stage.height = stageSize.height;
 
     //
     // Pixi.js renderer and target (main component)
     // will take the full size of the viewport.
     //
-    this.pixi_Renderer.resize(newWidth, newHeight);
-    this.pixi_Target.width = newWidth;
-    this.pixi_Target.height = newHeight;
+    pixi_Renderer.resize(newWidth, newHeight);
+    pixi_RootContainer.width = newWidth;
+    pixi_RootContainer.height = newHeight;
+
+    //
+    // Set renderer resolution
+    //
+    // NOTE: The sprites will NOT change if the device
+    // resolution changes.
+    //
+    // pixi_Renderer.resolution = window.devicePixelRatio;
   }, 333);
 
+  //
+  // React.js Lifecycle Event
+  // (componentDidMount)
+  //
   async componentDidMount() {
+
+    //
+    // Bind window resize
+    //
     window.addEventListener('resize', this.onWindowResize);
-    await this.pixi_LoadSpritesheets();
+
+    //
+    // Chain-load assets
+    // (images, spritesheets)
+    //
+    try {
+      await this.pixi_LoadAssets();
+    } catch (err) {
+      throw err;
+    }
+
+    //
+    // Trigger resize logic manually once to calculate
+    // proper sizes
+    //
+    this.onWindowResize();
+
+    //
+    // Mark animation as loaded; this shows the animation
+    // for the first time
+    //
+    this.setState({
+      ...this.state,
+      isAnimationLoaded: true,
+    });
   }
 
+  //
+  // React.js Lifecycle Event
+  // (render)
+  //
   render() {
-    if (!this.state.isAnimationLoaded) return <Loader />;
+    const { isAnimationLoaded } = this.state;
+    
+    const parentStyle = {
+      width: '100vw',
+      height: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: isAnimationLoaded ? '#FFFFFF' : '#000000',
+      textAlign: 'center',
+      transition: 'background-color 0.3s ease-out',
+    };
 
-    return null;
+    return (
+      <div style={parentStyle} ref={elem => this.pixi_RootNode = elem}>
+        {!isAnimationLoaded ? <Loader /> : (
+          //
+          // Render animation
+          //
+          null
+        )}
+      </div>
+    );
   }
 
+  //
+  // React.js Lifecycle Event
+  // (componentWillUnmount)
+  //
   componentWillUnmount() {
-
     window.removeEventListener('resize', this.onWindowResize);
-
-    const { RENDERER, TICKER } = this.pixiApp;
-    TICKER.stop();
-    RENDERER.destroy(true);
+    this.pixi_Renderer.destroy(true);
   }
 }
 
