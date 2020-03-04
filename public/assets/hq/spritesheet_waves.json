@@ -1,11 +1,11 @@
 {
 	"meta": {
-		"image": "ss_sea.png",
+		"image": "spritesheet_waves.png",
 		"size": {"w":4096,"h":2048},
 		"scale": "1"
 	},
 	"frames": {
-		"wave_3.png":
+		"wave2.png":
 		{
 			"frame": {"x":0,"y":0,"w":1903,"h":1061},
 			"rotated": false,
@@ -13,7 +13,7 @@
 			"spriteSourceSize": {"x":0,"y":0,"w":1903,"h":1061},
 			"sourceSize": {"w":1903,"h":1061}
 		},
-		"wave_4.png":
+		"wave1.png":
 		{
 			"frame": {"x":1903,"y":0,"w":862,"h":898},
 			"rotated": false,
@@ -21,7 +21,7 @@
 			"spriteSourceSize": {"x":0,"y":0,"w":862,"h":898},
 			"sourceSize": {"w":862,"h":898}
 		},
-		"wave_2.png":
+		"wave3.png":
 		{
 			"frame": {"x":0,"y":1061,"w":371,"h":213},
 			"rotated": false,
@@ -29,7 +29,7 @@
 			"spriteSourceSize": {"x":0,"y":0,"w":371,"h":213},
 			"sourceSize": {"w":371,"h":213}
 		},
-		"wave_1.png":
+		"wave4.png":
 		{
 			"frame": {"x":1903,"y":898,"w":329,"h":145},
 			"rotated": false,
