@@ -40,6 +40,12 @@ class PitchingAndMoaning extends React.Component {
     const isHQ = window.devicePixelRatio > 1;
     const loader = PIXI.Loader.shared;
 
+    //
+    // IMPORTANT | REMINDER : Edit this variable according
+    // to final asset location. On GitHub Pages, the assets
+    // are served at root://pitching-and-moaning/assets
+    // (as per my repository name: 'pitching-and-moaning')
+    //
     const assetsPath = `${isDev ? '' : '/pitching-and-moaning'}/assets${isHQ ? '/hq' : ''}`;
     const assets = [
       `${assetsPath}/frame.png`,
