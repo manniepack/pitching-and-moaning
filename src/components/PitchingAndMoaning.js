@@ -30,6 +30,7 @@ class PitchingAndMoaning extends React.Component {
     antialias: true,
     autoDensity: true,
     sharedTicker: true,
+    transparent: true,
   });
   pixi_RootNode = React.createRef();
   pixi_RootContainer = new PIXI.Container();
