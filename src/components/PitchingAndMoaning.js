@@ -8,6 +8,8 @@ import { Size, getScaledRect, POLICY } from 'adaptive-scale/lib-esm';
 import Loader from './Loader';
 import Animation from './Animation';
 
+import { GetAssetURI } from '../utils/assets';
+
 class PitchingAndMoaning extends React.Component {
 
   state = {
@@ -38,23 +40,14 @@ class PitchingAndMoaning extends React.Component {
   pixi_Stage = new PIXI.Container();
 
   pixi_LoadAssets = async () => {
-    const isDev = process.env.NODE_ENV === 'development';
-    const isHQ = window.devicePixelRatio > 1;
     const loader = PIXI.Loader.shared;
 
-    //
-    // IMPORTANT | REMINDER : Edit this variable according
-    // to final asset location. On GitHub Pages, the assets
-    // are served at root://pitching-and-moaning/assets
-    // (as per my repository name: 'pitching-and-moaning')
-    //
-    const assetsPath = `${isDev ? '' : '/pitching-and-moaning'}/assets${isHQ ? '/hq' : ''}`;
     const assets = [
-      `${assetsPath}/frame.png`,
-      `${assetsPath}/sky.png`,
-      `${assetsPath}/spritesheet_char.json`,
-      `${assetsPath}/spritesheet_waves.json`,
-      `${assetsPath}/spritesheet_lightning.json`,
+      GetAssetURI('frame.png'),
+      GetAssetURI('sky.png'),
+      GetAssetURI('spritesheet_char.json'),
+      GetAssetURI('spritesheet_waves.json'),
+      GetAssetURI('spritesheet_lightning.json'),
     ];
 
     return new Promise((resolve, reject) => {
@@ -170,8 +163,7 @@ class PitchingAndMoaning extends React.Component {
           // Render animation
           //
           <Animation
-            renderer={this.pixi_Renderer}
-            root={this.pixi_RootContainer}
+            root={this.pixi_Renderer.view}
             stage={this.pixi_Stage}
           />
         )}
