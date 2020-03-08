@@ -2,12 +2,13 @@
   "name": "pitching-and-moaning",
   "version": "1.0.0",
   "description": "TV series promo for Eavesdrop Media's production: Pitching and Moaning",
-  "main": "index.html",
+  "main": "./src/index.html",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
     "start": "parcel ./src/index.html",
+    "build": "parcel build ./src/index.html",
     "sprites": "node ./scripts/generateSprites.js",
     "test": "echo \"No tests created\""
   },
