@@ -1,0 +1,41 @@
+{
+	"meta": {
+		"image": "spritesheet_waves.png",
+		"size": {"w":4096,"h":2048},
+		"scale": "1"
+	},
+	"frames": {
+		"wave2.png":
+		{
+			"frame": {"x":0,"y":0,"w":1903,"h":1061},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":1903,"h":1061},
+			"sourceSize": {"w":1903,"h":1061}
+		},
+		"wave1.png":
+		{
+			"frame": {"x":1903,"y":0,"w":862,"h":898},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":862,"h":898},
+			"sourceSize": {"w":862,"h":898}
+		},
+		"wave3.png":
+		{
+			"frame": {"x":0,"y":1061,"w":371,"h":213},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":371,"h":213},
+			"sourceSize": {"w":371,"h":213}
+		},
+		"wave4.png":
+		{
+			"frame": {"x":1903,"y":898,"w":329,"h":145},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":329,"h":145},
+			"sourceSize": {"w":329,"h":145}
+		}
+	}
+}

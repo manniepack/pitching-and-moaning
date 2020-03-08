@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "parcel ./src/index.html",
+    "sprites": "node ./scripts/generateSprites.js",
     "test": "echo \"No tests created\""
   },
   "repository": {
@@ -33,6 +34,7 @@
   "dependencies": {
     "adaptive-scale": "^1.0.0",
     "parcel": "^1.12.4",
-    "pixi.js": "^5.2.1"
+    "pixi.js": "^5.2.1",
+    "spritesheet-js": "^1.2.6"
   }
 }

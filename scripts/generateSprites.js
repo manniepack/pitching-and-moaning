@@ -2,8 +2,8 @@ const fs = require('fs');
 const Path = require('path');
 const spritesheet = require('spritesheet-js');
 
-const ASSETS = Path.join(process.env.PWD, 'docs/design/poster-graphic_v1-assets');
-const EXPORT = Path.join(process.env.PWD, 'public/assets');
+const ASSETS = Path.join(process.env.PWD, 'design/poster-graphic_v1-assets');
+const EXPORT = Path.join(process.env.PWD, 'src/assets');
 
 const clearExportLocation = async () => {
   return new Promise((resolve, reject) => {
