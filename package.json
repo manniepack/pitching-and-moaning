@@ -1,47 +1,38 @@
 {
   "name": "pitching-and-moaning",
-  "homepage": "https://manniepack.github.com/pitching-and-moaning",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.4.1",
-    "@testing-library/user-event": "^7.2.1",
-    "adaptive-scale": "^1.0.0",
-    "lodash.debounce": "^4.0.8",
-    "pixi.js": "^5.2.1",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0",
-    "react-player": "^1.15.2",
-    "react-scripts": "3.3.0",
-    "sanitize.css": "^11.0.0"
+  "version": "1.0.0",
+  "description": "TV series promo for Eavesdrop Media's production: Pitching and Moaning",
+  "main": "index.html",
+  "directories": {
+    "doc": "docs"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "genSprites": "node ./src/utils/generateSprites.js",
-    "build": "react-scripts build",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "parcel ./src/index.html",
+    "test": "echo \"No tests created\""
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manniepack/pitching-and-moaning.git"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "keywords": [
+    "tv",
+    "series",
+    "show",
+    "pitching-and-moaning",
+    "pitching",
+    "and",
+    "moaning",
+    "amazon"
+  ],
+  "author": "@manniepack + Eavesdrop Media",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/manniepack/pitching-and-moaning/issues"
   },
-  "devDependencies": {
-    "gh-pages": "^2.2.0",
-    "spritesheet-js": "^1.2.6"
+  "homepage": "https://github.com/manniepack/pitching-and-moaning#readme",
+  "dependencies": {
+    "adaptive-scale": "^1.0.0",
+    "parcel": "^1.12.4",
+    "pixi.js": "^5.2.1"
   }
 }
