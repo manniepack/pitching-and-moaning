@@ -1,21 +1,8 @@
 {
   "name": "pitching-and-moaning",
+  "author": "@manniepack + Eavesdrop Media",
   "version": "1.0.0",
   "description": "TV series promo for Eavesdrop Media's production: Pitching and Moaning",
-  "main": "./src/index.html",
-  "directories": {
-    "doc": "docs"
-  },
-  "scripts": {
-    "start": "parcel ./src/index.html",
-    "build": "parcel build ./src/index.html",
-    "sprites": "node ./scripts/generateSprites.js",
-    "test": "echo \"No tests created\""
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/manniepack/pitching-and-moaning.git"
-  },
   "keywords": [
     "tv",
     "series",
@@ -26,19 +13,30 @@
     "moaning",
     "amazon"
   ],
-  "author": "@manniepack + Eavesdrop Media",
   "license": "MIT",
+  "homepage": "https://github.com/manniepack/pitching-and-moaning#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manniepack/pitching-and-moaning.git"
+  },
   "bugs": {
     "url": "https://github.com/manniepack/pitching-and-moaning/issues"
   },
-  "homepage": "https://github.com/manniepack/pitching-and-moaning#readme",
+  "scripts": {
+    "start": "parcel ./app/src/index.html -d ./app/dist/",
+    "build": "parcel build ./app/src/index.html -d ./app/dist/",
+    "sprites": "node ./app/utils/generateSprites.js",
+    "test": "echo \"No tests created\""
+  },
   "dependencies": {
     "adaptive-scale": "^1.0.0",
-    "chalk": "^3.0.0",
+    "loglevel": "^1.6.7",
     "pixi.js": "^5.2.1"
   },
   "devDependencies": {
+    "@types/node": "^13.9.0",
     "parcel-bundler": "^1.12.4",
-    "spritesheet-js": "^1.2.6"
+    "spritesheet-js": "^1.2.6",
+    "typescript": "^3.8.3"
   }
 }

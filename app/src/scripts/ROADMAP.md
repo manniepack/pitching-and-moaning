@@ -1,19 +1,22 @@
-
 //
 // [globalState]:
 //
-//   -> adapativeScale (Step 1)
-//     -> canvasSize
-//     -> stageSize
-//     -> resolution
+//   -> deviceViewport (Step 1)
+//     -> scaledCanvasRectangle
+//     -> windowSize
+//     -> deviceResolution
 //   -> pixi (Steps 2, 3, 4)
-//     -> renderer
-//     -> stage
-//     -> haveAssetsLoaded
-//     -> hasAnimationLoaded
+//     -> application
+//       -> renderer
+//       -> stage
+//       -> ticker
+//       -> assetLoader
+//       -> interactionManager
+//     -> state
+//       -> haveAssetsLoaded
+//       -> hasAnimationLoaded
 //   -> animation (Steps 3, 4)
-//     -> position for each sprite
-//     -> transforms for each sprite
+//     -> sprites: [initialState]
 //     -> isLightningStriking (filter sprites for color change)
 //
 
@@ -35,7 +38,7 @@
 // STEP 3
 //
 // Setup Pixi.js sprites
-//   -> Use [globalStage] for:
+//   -> Use [globalState] for:
 //     -> position
 //     -> transforms
 //     -> filtering on lightning strike
