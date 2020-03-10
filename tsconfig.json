@@ -1,12 +1,6 @@
 {
   "compilerOptions": {
     "target": "ES2015",
-    "outDir": "./app/dist/",
-    "baseUrl": ".",
-    "paths": {
-      "~*": ["./app/src/*"]
-    },
-    "module": "ES2015",
     "lib": [
       "ES5",
       "ES2015",
@@ -15,11 +9,25 @@
       "ESNext",
       "DOM"
     ],
+    "types": [ "*", "pixi.js"],
     "experimentalDecorators": true,
-    "removeComments": true,
     "strict": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
-    "sourceMap": true
-  }
+    "sourceMap": true,
+    "outDir": "./app/dist/",
+    "baseUrl": "./",
+    "paths": {
+      "~*": ["./app/src/*"]
+    },
+    "module": "ES2015",
+    "esModuleInterop": true,
+  },
+  "exclude": [
+    "node_modules",
+    ".cache",
+    "**/dist/**"
+  ]
 }
