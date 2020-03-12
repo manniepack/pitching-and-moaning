@@ -7,9 +7,14 @@
       "ES2017",
       "ES2018",
       "ESNext",
-      "DOM"
+      "DOM",
     ],
-    "types": [ "*", "pixi.js"],
+    "types": [
+      "adaptive-scale",
+      "loglevel",
+      "node",
+      "pixi.js"
+    ],
     "experimentalDecorators": true,
     "strict": true,
     "strictNullChecks": true,
@@ -17,7 +22,7 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "sourceMap": true,
-    "outDir": "./app/dist/",
+    "outDir": "./dist/",
     "baseUrl": "./",
     "paths": {
       "~*": ["./app/src/*"]

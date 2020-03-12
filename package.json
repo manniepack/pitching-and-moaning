@@ -23,8 +23,8 @@
     "url": "https://github.com/manniepack/pitching-and-moaning/issues"
   },
   "scripts": {
-    "start": "parcel ./app/src/index.html -d ./app/dist/",
-    "build": "parcel build ./app/src/index.html -d ./app/dist/",
+    "start": "parcel ./app/src/index.html -d ./dist/",
+    "build": "parcel build ./app/src/index.html -d ./dist/",
     "sprites": "node ./app/utils/generateSprites.js",
     "test": "echo \"No tests created\""
   },

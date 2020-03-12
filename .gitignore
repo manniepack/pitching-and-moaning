@@ -2,7 +2,7 @@
 
 .cache
 coverage
-app/dist
+dist
 node_modules
 *.log
 
