@@ -4,15 +4,14 @@ import {
 } from 'react';
 import * as AS from 'adaptive-scale';
 
+const TargetSize = new AS.Size(3200, 2320);
 const getScaledRect = (container: AS.Size): AS.Rect => {
-  const TargetSize = new AS.Size(3200, 2320);
-
   return AS.getScaledRect({
     container,
     target: TargetSize,
     policy: AS.POLICY.ShowAll,
   });
-}
+};
 
 interface ViewportState {
   viewportSize: AS.Size,
@@ -29,7 +28,6 @@ const useScaledViewport = (): ViewportState => {
   useEffect(() => {
     if (resolution !== window.devicePixelRatio)
       setResolution(window.devicePixelRatio);
-
     setScaledSize(getScaledRect(viewportSize));
   }, [viewportSize]);
 
@@ -39,10 +37,9 @@ const useScaledViewport = (): ViewportState => {
 
   useEffect(() => {
     window.addEventListener('resize', handleWindowResize);
-
     return () => {
       window.removeEventListener('resize', handleWindowResize);
-    }
+    };
   }, []);
 
   return {
@@ -52,4 +49,7 @@ const useScaledViewport = (): ViewportState => {
   };
 };
 
-export default useScaledViewport;
+export {
+  useScaledViewport,
+  ViewportState,
+};
