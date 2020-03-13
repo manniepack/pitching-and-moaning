@@ -3,10 +3,13 @@ import React, {
 } from 'react';
 import Page from '~/scripts/components/Page';
 
+import useScaledViewport from '~/scripts/hooks/useScaledViewport';
+
 const Root = () => {
 
   // const [isLoading, setLoading] = useState(true);
   const [isLoading] = useState(true);
+  const viewportState = useScaledViewport();
 
   return (
     <Page isLoading={isLoading}>
@@ -14,6 +17,6 @@ const Root = () => {
       <h2>Render animation!</h2>
     </Page>
   );
-}
+};
 
 export default Root;
