@@ -19,13 +19,14 @@ const Page = styled.section`
   background-color: ${({ isLoading }: Props) => isLoading ? 'black' : 'white'};
   color: ${({ isLoading }: Props) => isLoading ? 'white' : 'black'};
 
-  transition: all 0.232s ease-in;
+  transition: background-color 0.232s ease-in,
+              color 0.232s ease-in;
 `;
 
 const PageWrapper = ({ isLoading, children, ...rest}: Props) => {
   if (isLoading)
     children = <Loader />
-  
+
   return (
     <Page isLoading={isLoading} {...rest}>
       {children}
