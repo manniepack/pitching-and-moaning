@@ -9,11 +9,16 @@
       "ESNext",
       "DOM",
     ],
+    "jsx": "react",
     "types": [
       "adaptive-scale",
       "loglevel",
       "node",
-      "pixi.js"
+      "pixi.js",
+      "prop-types",
+      "react",
+      "react-dom",
+      "styled-components"
     ],
     "experimentalDecorators": true,
     "strict": true,
@@ -27,12 +32,12 @@
     "paths": {
       "~*": ["./app/src/*"]
     },
-    "module": "ES2015",
+    "module": "commonjs",
     "esModuleInterop": true,
   },
   "exclude": [
     "node_modules",
     ".cache",
-    "**/dist/**"
+    "dist/**"
   ]
 }
