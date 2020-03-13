@@ -2,7 +2,6 @@ import React, {
   useState,
   useRef,
   useCallback,
-  useEffect,
 } from 'react';
 
 import Page from '~/scripts/components/Page';
@@ -18,18 +17,15 @@ const Root = () => {
 
   const rendererRef = useRef<HTMLDivElement>();
   const setRendererRef = useCallback(((node: HTMLDivElement) => {
+    if (!node) {
+      rendererRef.current = undefined;
+      return;
+    }
+
+    if (!node.hasChildNodes())
+      node.appendChild(pixi.renderer.view);
     rendererRef.current = node;
   }), []);
-
-  /**
-   * Add Pixi.js rendering element to DOM.
-   */
-  useEffect(() => {
-    const node = rendererRef.current;
-    if (!pixi || !node || node.hasChildNodes())
-      return;
-    node.appendChild(pixi.renderer.view);
-  });
 
   return (
     <Page isLoading={isLoading}>

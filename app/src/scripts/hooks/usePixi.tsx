@@ -25,33 +25,24 @@ interface PixiApp {
   stage: PIXI.Container;
 }
 
+const pixiApp: PixiApp = {
+  renderer: PIXI.autoDetectRenderer({
+    autoDensity: true,
+    antialias: true,
+    transparent: process.env.NODE_ENV === 'development' ? false : true,
+    backgroundColor: 0xCCCCCC,
+  }),
+  stage: new PIXI.Container(),
+};
+
 const usePixi = (scaledViewport: ViewportState, setLoading: Dispatch<SetStateAction<boolean>>): [PixiApp] => {
 
-  const [app, setApp] = useState<PixiApp>(null!);
+  const [app] = useState<PixiApp>(pixiApp);
 
-  /**
-   * Initial PixiApp on component mount.
-   */
   useEffect(() => {
-    const app = {
-      renderer: PIXI.autoDetectRenderer({
-        autoDensity: true,
-        antialias: true,
-        transparent: true,
-      }),
-      stage: new PIXI.Container(),
-    };
-    /**
-     * Set PixiApp dimensions once, before adding to state.
-     */
     setDimensions(app, scaledViewport);
-    setApp(app);
-
-    // TODO: unset loading AFTER sprites (once implemented)
-    setLoading(false);
-
+    setLoading(false); // TODO: set this AFTER sprites are loaded
     return () => {
-      if (!app) return;
       app.renderer.destroy(true);
     };
   }, []);
@@ -60,7 +51,6 @@ const usePixi = (scaledViewport: ViewportState, setLoading: Dispatch<SetStateAct
    * Reset PixiApp dimensions when viewport changes.
    */
   useEffect(() => {
-    if (!app) return;
     setDimensions(app, scaledViewport);
   }, [scaledViewport]);
 
@@ -68,7 +58,6 @@ const usePixi = (scaledViewport: ViewportState, setLoading: Dispatch<SetStateAct
    * Re-render Pixi.js on each update.
    */
   useEffect(() => {
-    if (!app) return;
     app.renderer.render(app.stage);
   });
 
