@@ -13,13 +13,13 @@ const getScaledRect = (container: AS.Size): AS.Rect => {
   });
 };
 
-interface ViewportState {
+export interface ScaledViewport {
   viewportSize: AS.Size,
   scaledSize: AS.Rect,
   resolution: number,
 }
 
-const useScaledViewport = (): ViewportState => {
+export default (): ScaledViewport => {
 
   const [viewportSize, setViewportSize] = useState<AS.Size>(new AS.Size(window.innerWidth, window.innerHeight));
   const [scaledSize, setScaledSize] = useState<AS.Rect>(getScaledRect(viewportSize));
@@ -47,9 +47,4 @@ const useScaledViewport = (): ViewportState => {
     scaledSize,
     resolution,
   };
-};
-
-export {
-  useScaledViewport,
-  ViewportState,
 };

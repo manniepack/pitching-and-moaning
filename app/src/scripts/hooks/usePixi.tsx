@@ -6,9 +6,9 @@ import {
 } from 'react';
 import * as PIXI from 'pixi.js';
 
-import { ViewportState } from '~/scripts/hooks/useScaledViewport';
+import { ScaledViewport } from '~scripts/hooks/useScaledViewport';
 
-const setDimensions = (app: PixiApp, newDimensions: ViewportState) => {
+const setDimensions = (app: PixiApp, newDimensions: ScaledViewport) => {
   const { renderer, stage } = app;
   const { viewportSize, scaledSize, resolution } = newDimensions;
 
@@ -20,7 +20,7 @@ const setDimensions = (app: PixiApp, newDimensions: ViewportState) => {
   renderer.resize(viewportSize.width, viewportSize.height);
 };
 
-interface PixiApp {
+export interface PixiApp {
   renderer: PIXI.Renderer;
   stage: PIXI.Container;
 }
@@ -35,7 +35,7 @@ const pixiApp: PixiApp = {
   stage: new PIXI.Container(),
 };
 
-const usePixi = (scaledViewport: ViewportState, setLoading: Dispatch<SetStateAction<boolean>>): [PixiApp] => {
+export default (scaledViewport: ScaledViewport, setLoading: Dispatch<SetStateAction<boolean>>): [PixiApp] => {
 
   const [app] = useState<PixiApp>(pixiApp);
 
@@ -62,6 +62,4 @@ const usePixi = (scaledViewport: ViewportState, setLoading: Dispatch<SetStateAct
   });
 
   return [app];
-}
-
-export default usePixi;
+};

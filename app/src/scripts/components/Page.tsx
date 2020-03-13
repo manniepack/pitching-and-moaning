@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Loader from '~/scripts/components/Loader';
+import Loader from '~scripts/components/Loader';
 
 interface Props {
   isLoading: boolean;
@@ -23,7 +23,7 @@ const Page = styled.section`
               color 0.232s ease-in;
 `;
 
-const PageWrapper = ({ isLoading, children, ...rest}: Props) => {
+export default ({ isLoading, children, ...rest}: Props) => {
   if (isLoading)
     children = <Loader />
 
@@ -33,5 +33,3 @@ const PageWrapper = ({ isLoading, children, ...rest}: Props) => {
     </Page>
   )
 };
-
-export default PageWrapper;

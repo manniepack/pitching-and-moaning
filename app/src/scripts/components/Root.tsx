@@ -4,16 +4,27 @@ import React, {
   useCallback,
 } from 'react';
 
-import Page from '~/scripts/components/Page';
+import Page from '~scripts/components/Page';
 
-import usePixi from '~/scripts/hooks/usePixi';
-import { useScaledViewport } from '~/scripts/hooks/useScaledViewport';
+import useScaledViewport from '~scripts/hooks/useScaledViewport';
+import usePixi from '~scripts/hooks/usePixi';
+import useSprites from '~scripts/hooks/sprites/useSprites';
 
 const Root = () => {
 
+  /**
+   * Initialize application state.
+   * - {isLoading}: loading state (unset after assets are loaded)
+   * - {isWatching}: video player visibility
+   * - {scaledViewport}: dynamic dimensions + resolution
+   * - {pixi}: Pixi.js renderer + stage
+   */
   const [isLoading, setLoading] = useState(true);
+  const [isWatching, setWatching] = useState(false);
   const scaledViewport = useScaledViewport();
   const [pixi] = usePixi(scaledViewport, setLoading);
+
+  useSprites(pixi, setWatching);
 
   const rendererRef = useRef<HTMLDivElement>();
   const setRendererRef = useCallback(((node: HTMLDivElement) => {
