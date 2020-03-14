@@ -16,11 +16,11 @@ export default (pixi: PixiApp, setLoading: Dispatch<SetStateAction<boolean>>, se
   useEffect(() => {
     const loader = PIXI.Loader.shared;
     loader
-      // .add('sky', sky)
-      // .add('lightning', lightning)
-      // .add('waves', waves)
-      // .add('char', char)
-      // .add('frame', frame)
+      .add('sky', 'assets/sky.png')
+      .add('lightning', 'assets/spritesheet_lightning.json')
+      .add('waves', 'assets/spritesheet_waves.json')
+      .add('char', 'assets/spritesheet_char.json')
+      .add('frame', 'assets/frame.png')
       .load(onAssetLoad);
   }, []);
 };
