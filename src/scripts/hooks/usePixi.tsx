@@ -35,13 +35,12 @@ const pixiApp: PixiApp = {
   stage: new PIXI.Container(),
 };
 
-export default (scaledViewport: ScaledViewport, setLoading: Dispatch<SetStateAction<boolean>>): [PixiApp] => {
+export default (scaledViewport: ScaledViewport): [PixiApp] => {
 
   const [app] = useState<PixiApp>(pixiApp);
 
   useEffect(() => {
     setDimensions(app, scaledViewport);
-    setLoading(false); // TODO: set this AFTER sprites are loaded
     return () => {
       app.renderer.destroy(true);
     };

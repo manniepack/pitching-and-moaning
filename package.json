@@ -23,9 +23,9 @@
     "url": "https://github.com/manniepack/pitching-and-moaning/issues"
   },
   "scripts": {
-    "start": "parcel ./app/src/index.html -d ./dist/",
-    "build": "parcel build ./app/src/index.html -d ./dist/",
-    "sprites": "node ./app/utils/generateSprites.js",
+    "start": "parcel ./src/index.html -d ./dist/",
+    "build": "parcel build ./src/index.html -d ./dist/",
+    "sprites": "node ./utils/generateSprites.js",
     "test": "echo \"No tests created\""
   },
   "dependencies": {
@@ -46,7 +46,16 @@
     "@types/react-dom": "^16.9.5",
     "@types/styled-components": "^5.0.1",
     "parcel-bundler": "^1.12.4",
+    "parcel-plugin-static-files-copy": "^2.3.1",
     "spritesheet-js": "^1.2.6",
     "typescript": "^3.8.3"
+  },
+  "staticFiles": {
+    "staticPath": [
+      {
+        "staticPath": "assets",
+        "staticOutDir": "assets"
+      }
+    ]
   }
 }

@@ -22,9 +22,9 @@ const Root = () => {
   const [isLoading, setLoading] = useState(true);
   const [isWatching, setWatching] = useState(false);
   const scaledViewport = useScaledViewport();
-  const [pixi] = usePixi(scaledViewport, setLoading);
+  const [pixi] = usePixi(scaledViewport);
 
-  useSprites(pixi, setWatching);
+  useSprites(pixi, setLoading, setWatching);
 
   const rendererRef = useRef<HTMLDivElement>();
   const setRendererRef = useCallback(((node: HTMLDivElement) => {

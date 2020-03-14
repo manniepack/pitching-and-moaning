@@ -30,7 +30,7 @@
     "outDir": "./dist/",
     "baseUrl": "./",
     "paths": {
-      "~*": ["./app/src/*"]
+      "~*": ["./src/*"]
     },
     "module": "commonjs",
     "esModuleInterop": true,
