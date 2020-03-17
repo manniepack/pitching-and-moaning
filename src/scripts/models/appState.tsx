@@ -18,8 +18,10 @@ function create() {
     viewportWidth: window.innerWidth,
     viewportHeight: window.innerHeight,
 
+    resolution: window.devicePixelRatio,
+
     get canvasSize_Scaled() {
-      const windowSize = new AS.Size(this.viewportHeight, this.viewportHeight);
+      const windowSize = new AS.Size(this.viewportWidth, this.viewportHeight);
 
       return AS.getScaledRect({
         container: windowSize,
@@ -35,7 +37,7 @@ type TAppState = ReturnType<typeof create>;
 const context = React.createContext<TAppState | null>(null);
 const ContextProvider = context.Provider;
 
-const WrappedProvider = (props: {children?: any}) => {
+const AppStateProvider = (props: {children?: any}) => {
 
   const store = useLocalStore(create);
 
@@ -46,7 +48,7 @@ const WrappedProvider = (props: {children?: any}) => {
   ));
 };
 
-function hook() {
+function useAppState() {
 
   const store = useContext(context);
 
@@ -59,6 +61,6 @@ function hook() {
 }
 
 export {
-  WrappedProvider as AppStateProvider,
-  hook as useAppState,
+  AppStateProvider,
+  useAppState,
 }
