@@ -29,8 +29,11 @@
     "test": "echo \"No tests created\""
   },
   "dependencies": {
+    "@inlet/react-pixi": "^1.2.5",
     "adaptive-scale": "^1.0.0",
     "loglevel": "^1.6.7",
+    "mobx": "^5.15.4",
+    "mobx-react-lite": "^1.5.2",
     "pixi.js": "^5.2.1",
     "prop-types": "^15.7.2",
     "react": "^16.13.0",
@@ -40,6 +43,7 @@
   },
   "devDependencies": {
     "@types/adaptive-scale": "git://github.com/manniepack/adaptive-scale.git",
+    "@types/loglevel": "^1.6.3",
     "@types/node": "^13.9.0",
     "@types/prop-types": "^15.7.3",
     "@types/react": "^16.9.23",

@@ -14,21 +14,20 @@ const getScaledRect = (container: AS.Size): AS.Rect => {
 };
 
 export interface ScaledViewport {
-  viewportSize: AS.Size,
-  scaledSize: AS.Rect,
-  resolution: number,
+  viewportSize: AS.Size;
+  scaledRect: AS.Rect;
+  resolution: number;
 }
 
 export default (): ScaledViewport => {
 
   const [viewportSize, setViewportSize] = useState<AS.Size>(new AS.Size(window.innerWidth, window.innerHeight));
-  const [scaledSize, setScaledSize] = useState<AS.Rect>(getScaledRect(viewportSize));
+  const [scaledRect, setScaledRect] = useState<AS.Rect>(getScaledRect(viewportSize));
   const [resolution, setResolution] = useState(window.devicePixelRatio);
 
   useEffect(() => {
-    if (resolution !== window.devicePixelRatio)
-      setResolution(window.devicePixelRatio);
-    setScaledSize(getScaledRect(viewportSize));
+    setResolution(window.devicePixelRatio);
+    setScaledRect(getScaledRect(viewportSize));
   }, [viewportSize]);
 
   const handleWindowResize = () => {
@@ -44,7 +43,7 @@ export default (): ScaledViewport => {
 
   return {
     viewportSize,
-    scaledSize,
+    scaledRect,
     resolution,
   };
 };

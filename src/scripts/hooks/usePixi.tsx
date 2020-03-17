@@ -1,6 +1,4 @@
 import {
-  Dispatch,
-  SetStateAction,
   useState,
   useEffect,
 } from 'react';
@@ -8,57 +6,49 @@ import * as PIXI from 'pixi.js';
 
 import { ScaledViewport } from '~scripts/hooks/useScaledViewport';
 
-const setDimensions = (app: PixiApp, newDimensions: ScaledViewport) => {
-  const { renderer, stage } = app;
-  const { viewportSize, scaledSize, resolution } = newDimensions;
+const setDimensions = (renderer: PIXI.Renderer, stage: PIXI.Container, newDimensions: ScaledViewport) => {
+  const { viewportSize, scaledRect, resolution } = newDimensions;
 
-  stage.position.set(scaledSize.x, scaledSize.y);
-  stage.width = scaledSize.width;
-  stage.height = scaledSize.height;
+  stage.position.set(scaledRect.x, scaledRect.y);
+  stage.width = scaledRect.width;
+  stage.height = scaledRect.height;
 
   renderer.resolution = resolution;
   renderer.resize(viewportSize.width, viewportSize.height);
 };
 
-export interface PixiApp {
-  renderer: PIXI.Renderer;
-  stage: PIXI.Container;
+const initialRenderer = PIXI.autoDetectRenderer({
+  autoDensity: true,
+  antialias: true,
+  transparent: true,
+});
+const initialStage = new PIXI.Sprite();
+
+if (process.env.NODE_ENV === 'development') {
+  initialStage.texture = PIXI.Texture.WHITE;
+  initialStage.tint = 0x23CDDF;
+} else {
+  initialRenderer.transparent = true;
 }
 
-const pixiApp: PixiApp = {
-  renderer: PIXI.autoDetectRenderer({
-    autoDensity: true,
-    antialias: true,
-    transparent: process.env.NODE_ENV === 'development' ? false : true,
-    backgroundColor: 0xCCCCCC,
-  }),
-  stage: new PIXI.Container(),
-};
+export default (scaledViewport: ScaledViewport): [PIXI.Renderer, PIXI.Container] => {
 
-export default (scaledViewport: ScaledViewport): [PixiApp] => {
-
-  const [app] = useState<PixiApp>(pixiApp);
-
-  useEffect(() => {
-    setDimensions(app, scaledViewport);
-    return () => {
-      app.renderer.destroy(true);
-    };
-  }, []);
+  const [renderer] = useState(initialRenderer);
+  const [stage] = useState(initialStage);
 
   /**
-   * Reset PixiApp dimensions when viewport changes.
+   * Update PixiApp dimensions when viewport changes.
    */
   useEffect(() => {
-    setDimensions(app, scaledViewport);
+    setDimensions(renderer, stage, scaledViewport);
   }, [scaledViewport]);
 
   /**
    * Re-render Pixi.js on each update.
    */
   useEffect(() => {
-    app.renderer.render(app.stage);
+    renderer.render(stage);
   });
 
-  return [app];
+  return [renderer, stage];
 };
