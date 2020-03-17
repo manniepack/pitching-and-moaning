@@ -27,6 +27,7 @@
     "sprites": "node ./utils/generateSprites.js",
     "prestart": "npm run clean && npm run sprites",
     "start": "parcel ./src/index.html -d ./dist/",
+    "prebuild": "npm run prestart",
     "build": "parcel build ./src/index.html -d ./dist/",
     "test": "echo \"No tests created\""
   },
