@@ -1,7 +1,7 @@
 {
   "name": "pitching-and-moaning",
   "author": "@manniepack + Eavesdrop Media",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "TV series promo for Eavesdrop Media's production: Pitching and Moaning",
   "keywords": [
     "tv",
@@ -23,33 +23,26 @@
     "url": "https://github.com/manniepack/pitching-and-moaning/issues"
   },
   "scripts": {
+    "clean": "shx --verbose rm -Rf ./{dist,assets}",
+    "sprites": "node ./utils/generateSprites.js",
+    "prestart": "npm run clean && npm run sprites",
     "start": "parcel ./src/index.html -d ./dist/",
     "build": "parcel build ./src/index.html -d ./dist/",
-    "sprites": "node ./utils/generateSprites.js",
     "test": "echo \"No tests created\""
   },
   "dependencies": {
     "adaptive-scale": "^1.0.0",
-    "loglevel": "^1.6.7",
+    "idx": "^2.5.6",
     "mobx": "^5.15.4",
-    "mobx-react-lite": "^1.5.2",
     "pixi.js": "^5.2.1",
-    "prop-types": "^15.7.2",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0",
-    "sanitize.css": "^11.0.0",
-    "styled-components": "^5.0.1"
+    "sanitize.css": "^11.0.0"
   },
   "devDependencies": {
     "@types/adaptive-scale": "git://github.com/manniepack/adaptive-scale.git",
-    "@types/loglevel": "^1.6.3",
     "@types/node": "^13.9.1",
-    "@types/prop-types": "^15.7.3",
-    "@types/react": "^16.9.23",
-    "@types/react-dom": "^16.9.5",
-    "@types/styled-components": "^5.0.1",
     "parcel-bundler": "^1.12.4",
     "parcel-plugin-static-files-copy": "^2.3.1",
+    "shx": "^0.3.2",
     "spritesheet-js": "^1.2.6",
     "typescript": "^3.8.3"
   },
