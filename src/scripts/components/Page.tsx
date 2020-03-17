@@ -1,13 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
-import Loader from '~scripts/components/Loader';
 
 interface PageProps {
   isLoading: boolean;
   [key: string]: any;
 }
 
-const Page = styled.section`
+const PageWrapper = styled.section`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,13 +21,17 @@ const Page = styled.section`
               color 0.232s ease-in;
 `;
 
-export default ({ isLoading, children, ...rest}: PageProps) => {
+const Loader = () => <span>...pitching, and moaning...</span>;
+
+const Page = ({ isLoading, children, ...rest}: PageProps) => {
   if (isLoading)
     children = <Loader />
 
   return (
-    <Page isLoading={isLoading} {...rest}>
+    <PageWrapper isLoading={isLoading} {...rest}>
       {children}
-    </Page>
+    </PageWrapper>
   )
 };
+
+export default Page;
