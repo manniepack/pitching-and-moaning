@@ -13,14 +13,13 @@
     "types": [
       "adaptive-scale",
       "loglevel",
-      "node",
       "mobx",
       "mobx-react-lite",
+      "node",
       "pixi.js",
       "prop-types",
       "react",
       "react-dom",
-      "@inlet/react-pixi",
       "styled-components"
     ],
     "experimentalDecorators": true,
