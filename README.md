@@ -6,10 +6,6 @@
 ```
 npm install
 ```
-### Generate Assets
-```
-npm run sprites
-```
 ---
 ### Run
 #### Watch Server
