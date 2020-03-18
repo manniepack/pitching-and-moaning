@@ -26,7 +26,7 @@
     "clean": "shx --verbose rm -Rf ./dist",
     "sprites": "node ./utils/generateSprites.js",
     "prestart": "npm run clean && npm run sprites",
-    "start": "parcel ./src/index.html -d ./dist/",
+    "start": "parcel ./src/index.html -d ./dist/ --port 8080",
     "prebuild": "npm run prestart",
     "build": "parcel build ./src/index.html -d ./dist/",
     "test": "echo \"No tests created\""
