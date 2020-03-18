@@ -54,17 +54,6 @@ type TTimedPointerPos = [number, number, number];
 //   -> pointer x, y, last time clicked, and type
 type TTimedPointerClick = [number, number, number, string];
 
-// type TEyeData = {
-//   x: number,
-//   y: number,
-//   width: number,
-//   height: number,
-//   center: {
-//     x: number,
-//     y: number,
-//   }
-// };
-
 
 
 // Setup event state //
