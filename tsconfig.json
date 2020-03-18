@@ -9,20 +9,13 @@
       "ESNext",
       "DOM",
     ],
-    "jsx": "react",
     "types": [
       "adaptive-scale",
-      "loglevel",
       "mobx",
-      "mobx-react-lite",
       "node",
       "pixi.js",
-      "prop-types",
-      "react",
-      "react-dom",
-      "styled-components"
+      "vimeo__player"
     ],
-    "experimentalDecorators": true,
     "strict": true,
     "strictNullChecks": true,
     "noUnusedLocals": true,

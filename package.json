@@ -32,6 +32,7 @@
     "test": "echo \"No tests created\""
   },
   "dependencies": {
+    "@vimeo/player": "^2.10.0",
     "adaptive-scale": "^1.0.0",
     "idx": "^2.5.6",
     "mobx": "^5.15.4",
@@ -41,6 +42,7 @@
   "devDependencies": {
     "@types/adaptive-scale": "git://github.com/manniepack/adaptive-scale.git",
     "@types/node": "^13.9.1",
+    "@types/vimeo__player": "^2.9.0",
     "parcel-bundler": "^1.12.4",
     "parcel-plugin-static-files-copy": "^2.3.1",
     "shx": "^0.3.2",
