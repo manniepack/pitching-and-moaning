@@ -23,7 +23,7 @@
     "url": "https://github.com/manniepack/pitching-and-moaning/issues"
   },
   "scripts": {
-    "clean": "shx --verbose rm -Rf ./{dist,assets}",
+    "clean": "shx --verbose rm -Rf ./dist",
     "sprites": "node ./utils/generateSprites.js",
     "prestart": "npm run clean && npm run sprites",
     "start": "parcel ./src/index.html -d ./dist/",
