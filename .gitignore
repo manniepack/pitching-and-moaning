@@ -2,6 +2,7 @@
 
 .cache
 coverage
+assets
 dist
 node_modules
 *.log
