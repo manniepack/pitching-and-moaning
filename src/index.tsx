@@ -161,7 +161,7 @@ const updatePixiSize = (app: IGraphics) => {
 //   -> stage stage every tick
 PIXI.Ticker.system.add(() => {
   pixiApp.renderer.render(pixiApp.stage);
-}, PIXI.UPDATE_PRIORITY.NORMAL);
+}, PIXI.UPDATE_PRIORITY.LOW);
 
 //   => (event) viewport state change -> (resize) pixiApp
 MobX.autorun(() => updatePixiSize(pixiApp));
@@ -383,9 +383,11 @@ PIXI.Loader.shared
 
 
 // Build sprite interactions //
-//   -> observer function to track target with eyes
+//   -> utility function to track position with character's eyes
 function trackTargetWithEyes(targetX: number, targetY: number) {
 
+  //   -> use on-screen bounds with screen target
+  //      averages eye position's to prevent lazy eye
   const eyeLeftBounds = char_EyeLeft_Origin.getBounds();
   const eyeRightBounds = char_EyeRight_Origin.getBounds();
   const eyesAverageCenter = {
@@ -397,8 +399,8 @@ function trackTargetWithEyes(targetX: number, targetY: number) {
     x: targetX - eyesAverageCenter.x,
     y: targetY - eyesAverageCenter.y,
   }
-
   const targetDistance = Math.sqrt(Math.pow(targetVector.x, 2) + Math.pow(targetVector.y, 2));
+
   if (targetDistance < 18) return;
 
   const normalizedVector = {
@@ -407,8 +409,8 @@ function trackTargetWithEyes(targetX: number, targetY: number) {
   };
 
   const translation = {
-    x: 16 * normalizedVector.x,
-    y: 7 * normalizedVector.y,
+    x: 20 * normalizedVector.x,
+    y: 8 * normalizedVector.y,
   }
 
   char_EyeLeft.position.set(
@@ -420,6 +422,29 @@ function trackTargetWithEyes(targetX: number, targetY: number) {
     char_EyeRight_Origin.x + translation.x,
     char_EyeRight_Origin.y + translation.y
   );
+}
+
+//   -> utility function to randomly track with character's eyes
+function trackRandomlyWithEyes() {
+  const latestPointerTime = pointerPos[2] > pointerClick[2] ? pointerPos[2] : pointerClick[2];
+  if (latestPointerTime + 3333 > Date.now()) return;
+
+  const chance = 808;
+  const luck = 1000 * Math.random();
+  
+  if (luck < chance) return;
+  
+  const stageBounds = pixiApp.stage.getBounds();
+  const maxSize = {
+    width: stageBounds.width + stageBounds.x * 2,
+    height: stageBounds.height + stageBounds.y * 2,
+  };
+  const randomPos = {
+    x: Math.floor(maxSize.width * Math.random()),
+    y: Math.floor(maxSize.height * Math.random()),
+  };
+
+  trackTargetWithEyes(randomPos.x, randomPos.y);
 }
 
 //   => (event) pointerPos -> char hover sprite replacement
@@ -465,3 +490,6 @@ MobX.autorun(() => {
     trackTargetWithEyes(pointerClick[0], pointerClick[1]);
   }
 });
+
+//   => (event) timer -> idle character eye-movement
+window.setInterval(trackRandomlyWithEyes, 333);
