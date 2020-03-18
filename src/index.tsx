@@ -7,7 +7,7 @@ import * as PIXI from 'pixi.js';
 import * as AS from 'adaptive-scale';
 import Player from '@vimeo/player';
 
-// const IS_DEV = process.env.NODE_ENV === 'development';
+const IS_DEV = process.env.NODE_ENV === 'development';
 const CANVAS_SIZE = [3200, 2320];
 const SPRITE_ORIGIN = {
   eye: {
@@ -262,11 +262,11 @@ const frame = new PIXI.Sprite();
 //   -> the add function's first arguments are
 //      keys which refer to texture on resources
 PIXI.Loader.shared
-  .add('frame', 'assets/hq/frame.png')
-  .add('sky', 'assets/hq/sky.png')
-  .add('lightning', 'assets/hq/spritesheet_lightning.json')
-  .add('waves', 'assets/hq/spritesheet_waves.json')
-  .add('char', 'assets/hq/spritesheet_char.json')
+  .add('frame', `${IS_DEV ? '' : 'pitching-and-moaning/'}assets/hq/frame.png`)
+  .add('sky', `${IS_DEV ? '' : 'pitching-and-moaning/'}assets/hq/sky.png`)
+  .add('lightning', `${IS_DEV ? '' : 'pitching-and-moaning/'}assets/hq/spritesheet_lightning.json`)
+  .add('waves', `${IS_DEV ? '' : 'pitching-and-moaning/'}assets/hq/spritesheet_waves.json`)
+  .add('char', `${IS_DEV ? '' : 'pitching-and-moaning/'}assets/hq/spritesheet_char.json`)
   .load(MobX.action((loader, resources) => {
 
     // TODO, sprite building callback //
