@@ -29,6 +29,8 @@
     "start": "parcel ./src/index.html -d ./dist/ --port 3000",
     "prebuild": "npm run prestart",
     "build": "parcel build ./src/index.html -d ./dist/",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "test": "echo \"No tests created\""
   },
   "dependencies": {
@@ -43,6 +45,7 @@
     "@types/adaptive-scale": "git://github.com/manniepack/adaptive-scale.git",
     "@types/node": "^13.9.1",
     "@types/vimeo__player": "^2.9.0",
+    "gh-pages": "^2.2.0",
     "parcel-bundler": "^1.12.4",
     "parcel-plugin-static-files-copy": "^2.3.1",
     "shx": "^0.3.2",
