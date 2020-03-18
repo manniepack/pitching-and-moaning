@@ -2,10 +2,10 @@
 
 .cache
 coverage
-assets
+*.log
 dist
 node_modules
-*.log
+public/assets
 
 # OS generated files
 .DS_Store

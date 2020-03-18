@@ -53,11 +53,6 @@
     "typescript": "^3.8.3"
   },
   "staticFiles": {
-    "staticPath": [
-      {
-        "staticPath": "assets",
-        "staticOutDir": "assets"
-      }
-    ]
+    "staticPath": "public"
   }
 }
