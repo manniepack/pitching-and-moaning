@@ -255,17 +255,17 @@ root.appendChild(page);
 
 
 // Build sprites //
-let cosmicBackgroundRadiation = new PIXI.Sprite();
-let sky = new PIXI.Sprite();
-let lightning = [new PIXI.Sprite(), new PIXI.Sprite(), new PIXI.Sprite()];
-let waves = [new PIXI.Sprite(), new PIXI.Sprite(), new PIXI.Sprite(), new PIXI.Sprite()];
-let char_EyeSclera = new PIXI.Sprite();
-let char_EyeRight_Origin = new PIXI.Sprite();
-let char_EyeRight = new PIXI.Sprite();
-let char_EyeLeft_Origin = new PIXI.Sprite();
-let char_EyeLeft = new PIXI.Sprite();
-let char = new PIXI.Sprite();
-let frame = new PIXI.Sprite();
+const cosmicBackgroundRadiation = new PIXI.Sprite();
+const sky = new PIXI.Sprite();
+const lightning = [new PIXI.Sprite(), new PIXI.Sprite(), new PIXI.Sprite()];
+const waves = [new PIXI.Sprite(), new PIXI.Sprite(), new PIXI.Sprite(), new PIXI.Sprite()];
+const char_EyeSclera = new PIXI.Sprite();
+const char_EyeRight_Origin = new PIXI.Sprite();
+const char_EyeRight = new PIXI.Sprite();
+const char_EyeLeft_Origin = new PIXI.Sprite();
+const char_EyeLeft = new PIXI.Sprite();
+const char = new PIXI.Sprite();
+const frame = new PIXI.Sprite();
 
 //   -> use shared asset manager from Pixi.js
 //      to asynchronously add sprites to scene
