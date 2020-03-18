@@ -8,6 +8,29 @@ import * as AS from 'adaptive-scale';
 
 const IS_DEV = process.env.NODE_ENV === 'development';
 const CANVAS_SIZE = [3200, 2320];
+const SPRITE_ORIGIN = {
+  eye: {
+    left: {
+      x: 1545.00,
+      y: 1024.50,
+    },
+    right: {
+      x: 1679.50,
+      y: 1023.50,
+    },
+  },
+  char: {
+    default: {
+      x: 1611.00,
+      y: 1380.50,
+    },
+    hover: {
+      x: 1611.00,
+      y: 1339.50,
+    },
+  },
+};
+
 
 
 // Setup types //
@@ -25,7 +48,22 @@ interface IViewport {
   resolution: number,
 }
 
-type TMousePos = [number, number];
+//   -> pointer x, y, and time last moved
+type TTimedPointerPos = [number, number, number];
+//   -> pointer x, y, last time clicked, and type
+type TTimedPointerClick = [number, number, number, string];
+
+// type TEyeData = {
+//   x: number,
+//   y: number,
+//   width: number,
+//   height: number,
+//   center: {
+//     x: number,
+//     y: number,
+//   }
+// };
+
 
 
 // Setup state //
@@ -41,6 +79,24 @@ function createViewport(): IViewport {
   }
 }
 
+//   -> utility function to create pure-object pointerPos
+function createPointerPos(event?: PointerEvent): TTimedPointerPos {
+  if (!event)
+    return [NaN, NaN, NaN];
+  return [event.x, event.y, Date.now()];
+}
+
+//   -> utility function to create pure-object pointerClick
+function createPointerClick(event?: PointerEvent): TTimedPointerClick {
+  if (!event)
+    return [NaN, NaN, NaN, ''];
+  return [event.x, event.y, Date.now(), event.pointerType];
+}
+
+const viewport = MobX.observable(createViewport());
+const pointerPos = MobX.observable<TTimedPointerPos>(createPointerPos());
+const pointerClick = MobX.observable<TTimedPointerClick>(createPointerClick());
+
 //   -> utility function to update viewport instance
 //      this is useful to preserve MobX from being overwritten
 //      by changing the whole instance to a plain-object
@@ -50,28 +106,30 @@ const updateViewport = MobX.action(() => {
   viewport.resolution = window.devicePixelRatio;
 });
 
-//   -> utility function to create pure-object mousePos
-function createMousePos(event?: PointerEvent): TMousePos {
-  if (!event)
-    return [0, 0]; 
-  return [event.clientX, event.clientY];
-}
-
 //   -> utility function to update mousePos instance
-const updateMousePos = MobX.action((event: PointerEvent) => {
-  const pos = createMousePos(event);
-  mousePos[0] = pos[0];
-  mousePos[1] = pos[1];
+const updatePointerPos = MobX.action((event: PointerEvent) => {
+  const pos = createPointerPos(event);
+  pointerPos[0] = pos[0];
+  pointerPos[1] = pos[1];
+  pointerPos[2] = pos[2];
 });
 
-const viewport = MobX.observable(createViewport());
-const mousePos = MobX.observable(createMousePos());
+//   -> utility function to update pointerClick instance
+const updatePointerClick = MobX.action((event: PointerEvent) => {
+  const click = createPointerClick(event);
+  pointerClick[0] = click[0];
+  pointerClick[1] = click[1];
+  pointerClick[2] = click[2];
+  pointerClick[3] = click[3];
+});
 
 //   => (event) window resize -> (state) viewport
 window.addEventListener('resize', updateViewport);
+//   => (event) pointer move -> (state) pointerPos
+window.addEventListener('pointermove', updatePointerPos);
+//   => (event) pointer click -> (state) pointerClick
+window.addEventListener('pointerdown', updatePointerClick);
 
-//   => (event) pointer move -> (state) mousePos
-window.addEventListener('pointermove', updateMousePos);
 
 
 // Setup Pixi.js //
@@ -88,7 +146,6 @@ const pixiApp: IGraphics = {
 
 //   -> utility function to update pixiApp dimensions
 const updatePixiSize = (app: IGraphics) => {
-
   //   -> use adaptive-scale to scale viewport to fit design
   const canvasSize = AS.getScaledRect({
     container: new AS.Size(viewport.width, viewport.height),
@@ -110,6 +167,7 @@ PIXI.Ticker.system.add(() => {
 
 //   => (event) viewport state change -> (resize) pixiApp
 MobX.autorun(() => updatePixiSize(pixiApp));
+
 
 
 // Setup page and loader //
@@ -148,14 +206,21 @@ MobX.autorun(() => {
   if (isLoading.get()) {
     // parent loader element to page
     page.appendChild(loader);
-  } else {
-    // parent loader element to page
-    page.appendChild(pixiApp.renderer.view);
+    return;
+  }
+
+  // parent loader element to page
+  page.appendChild(pixiApp.renderer.view);
+
+  if (isWatching.get()) {
+    // parent video to page
+    console.log('now watching!');
   }
 });
 
 //   -> parent page element to root node
 root.appendChild(page);
+
 
 
 // Build sprites //
@@ -236,15 +301,15 @@ PIXI.Loader.shared
 
     char_EyeLeft.texture = idx(resources, _ => _.char.textures['eye_left.png']) || PIXI.Texture.WHITE;
     char_EyeLeft.anchor.set(0.5);
-    char_EyeLeft.position.set(1545.00, 1024.50);
+    char_EyeLeft.position.set(SPRITE_ORIGIN.eye.left.x, SPRITE_ORIGIN.eye.left.y);
 
     char_EyeRight.texture = idx(resources, _ => _.char.textures['eye_right.png']) || PIXI.Texture.WHITE;
     char_EyeRight.anchor.set(0.5);
-    char_EyeRight.position.set(1679.50, 1023.50);
+    char_EyeRight.position.set(SPRITE_ORIGIN.eye.right.x, SPRITE_ORIGIN.eye.right.y);
 
     char.texture = idx(resources, _ => _.char.textures['char.png']) || PIXI.Texture.WHITE;
     char.anchor.set(0.5);
-    char.position.set(1611.00, 1380.50);
+    char.position.set(SPRITE_ORIGIN.char.default.x, SPRITE_ORIGIN.char.default.y);
 
 
     frame.texture = idx(resources, _ => _.frame.texture) || PIXI.Texture.WHITE;
@@ -272,8 +337,115 @@ PIXI.Loader.shared
     isLoading.set(false);
   }));
 
-// Add interactions {
-//   eye,
-//   waves,
-//   lightning,
-// }
+
+
+// Build sprite interactions //
+//   -> character hover interaction (pointerPos)
+MobX.autorun(() => {
+  const [x, y] = pointerPos;
+  if (Number.isNaN(x)) return;
+
+  const charRect = char.getBounds();
+  if (charRect.contains(x, y)) {
+    char.texture = idx(PIXI.Loader.shared.resources, _ => _.char.textures['char_hover.png']) || PIXI.Texture.WHITE;
+    char.anchor.set(0.5);
+    char.position.set(SPRITE_ORIGIN.char.hover.x, SPRITE_ORIGIN.char.hover.y);
+  } else {
+    char.texture = idx(PIXI.Loader.shared.resources, _ => _.char.textures['char.png']) || PIXI.Texture.WHITE;
+    char.anchor.set(0.5);
+    char.position.set(SPRITE_ORIGIN.char.default.x, SPRITE_ORIGIN.char.default.y);
+  }
+});
+
+//   -> character click interaction (pointerPos, isWatching)
+MobX.autorun(() => {
+  const [x, y, time, type] = pointerClick;
+  if (Number.isNaN(x)) return;
+
+  if (!char.getBounds().contains(x, y))
+    return;
+
+  if (type === 'mouse') {
+    isWatching.set(true);
+    return;
+  }
+
+  char.texture = idx(PIXI.Loader.shared.resources, _ => _.char.textures['char_hover.png']) || PIXI.Texture.WHITE;
+  char.anchor.set(0.5);
+  char.position.set(SPRITE_ORIGIN.char.hover.x, SPRITE_ORIGIN.char.hover.y);
+
+  window.setTimeout(() => isWatching.set(true), 2323);
+});
+
+// MobX.autorun(() => {
+//   const [x, y, time] = pointerPos;
+//   if (Number.isNaN(x)) return;
+
+//   function getEyeDataFromSprite(eye: PIXI.Sprite): TEyeData {
+//     const bounds = eye.getBounds();
+//     return {
+//       x: bounds.x,
+//       y: bounds.y,
+//       width: bounds.width,
+//       height: bounds.height,
+//       center: {
+//         x: bounds.x + bounds.width / 2,
+//         y: bounds.y + bounds.height / 2,
+//       }
+//     };
+//   };
+
+//   function tryTrackingEyes(targetX: number, targetY: number): boolean {
+//     const eyeLeft = getEyeDataFromSprite(char_EyeLeft);
+//     const eyeRight = getEyeDataFromSprite(char_EyeRight);
+
+//     const eyeAveragePos = {
+//       x: (eyeLeft.center.x + eyeRight.center.x) / 2,
+//       y: (eyeLeft.center.y + eyeRight.center.y) / 2,
+//     };
+
+//     const eyesToTarget_Vector = {
+//       x: targetX - eyeAveragePos.x,
+//       y: targetY - eyeAveragePos.y,
+//     };
+//     const eyesToTarget_Distance = Math.sqrt(Math.pow(eyesToTarget_Vector.x, 2) + Math.pow(eyesToTarget_Vector.y, 2));
+
+//     if (eyesToTarget_Distance < 64) {
+//       return false;
+//     } else {
+//       const eyesToTarget_NormalizedVector = {
+//         x: eyesToTarget_Vector.x / eyesToTarget_Distance,
+//         y: eyesToTarget_Vector.y / eyesToTarget_Distance * -1,
+//       };
+
+//       console.dir({
+//         eyesToTarget_Distance,
+//         eyesToTarget_NormalizedVector,
+//       });
+
+//       const eyesPos_New = {
+//         left: [
+//           SPRITE_ORIGIN.eye.left.x + eyesToTarget_NormalizedVector.x,
+//           SPRITE_ORIGIN.eye.left.y + eyesToTarget_NormalizedVector.y,
+//         ],
+//         right: [
+//           SPRITE_ORIGIN.eye.right.x + eyesToTarget_NormalizedVector.x,
+//           SPRITE_ORIGIN.eye.right.y + eyesToTarget_NormalizedVector.y,
+//         ],
+//       };
+
+//       char_EyeLeft.position.set(...eyesPos_New.left);
+//       char_EyeRight.position.set(...eyesPos_New.right);
+      
+//       return true;
+//     }
+//   }
+
+//   if (time < Date.now() + 3333) {
+//     // interrupt auto-look!
+//     if (tryTrackingEyes(x, y))
+//       return;
+//   }
+
+//   // TODO: RANDOM LOOKAROUND!!!
+// });
