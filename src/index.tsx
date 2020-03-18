@@ -80,14 +80,14 @@ function createViewport(): IViewport {
 //   -> utility function to create pure-object pointerPos
 function createPointerPos(event?: PointerEvent): TTimedPointerPos {
   if (!event)
-    return [NaN, NaN, NaN];
+    return [NaN, NaN, 0];
   return [event.x, event.y, Date.now()];
 }
 
 //   -> utility function to create pure-object pointerClick
 function createPointerClick(event?: PointerEvent): TTimedPointerClick {
   if (!event)
-    return [NaN, NaN, NaN, ''];
+    return [NaN, NaN, 0, ''];
   return [event.x, event.y, Date.now(), event.pointerType];
 }
 
@@ -260,7 +260,9 @@ let sky = new PIXI.Sprite();
 let lightning = [new PIXI.Sprite(), new PIXI.Sprite(), new PIXI.Sprite()];
 let waves = [new PIXI.Sprite(), new PIXI.Sprite(), new PIXI.Sprite(), new PIXI.Sprite()];
 let char_EyeSclera = new PIXI.Sprite();
+let char_EyeRight_Origin = new PIXI.Sprite();
 let char_EyeRight = new PIXI.Sprite();
+let char_EyeLeft_Origin = new PIXI.Sprite();
 let char_EyeLeft = new PIXI.Sprite();
 let char = new PIXI.Sprite();
 let frame = new PIXI.Sprite();
@@ -330,9 +332,17 @@ PIXI.Loader.shared
     char_EyeSclera.anchor.set(0.5);
     char_EyeSclera.position.set(1610.50, 1023.50);
 
+    char_EyeLeft_Origin.texture = PIXI.Texture.EMPTY;
+    char_EyeLeft_Origin.anchor.set(0.5);
+    char_EyeLeft_Origin.position.set(SPRITE_ORIGIN.eye.left.x, SPRITE_ORIGIN.eye.left.y);
+
     char_EyeLeft.texture = idx(resources, _ => _.char.textures['eye_left.png']) || PIXI.Texture.WHITE;
     char_EyeLeft.anchor.set(0.5);
     char_EyeLeft.position.set(SPRITE_ORIGIN.eye.left.x, SPRITE_ORIGIN.eye.left.y);
+
+    char_EyeRight_Origin.texture = PIXI.Texture.EMPTY;
+    char_EyeRight_Origin.anchor.set(0.5);
+    char_EyeRight_Origin.position.set(SPRITE_ORIGIN.eye.right.x, SPRITE_ORIGIN.eye.right.y);
 
     char_EyeRight.texture = idx(resources, _ => _.char.textures['eye_right.png']) || PIXI.Texture.WHITE;
     char_EyeRight.anchor.set(0.5);
@@ -356,7 +366,9 @@ PIXI.Loader.shared
       sky,
       ...waves.reverse(),
       char_EyeSclera,
+      char_EyeLeft_Origin,
       char_EyeLeft,
+      char_EyeRight_Origin,
       char_EyeRight,
       char,
       frame,
@@ -371,13 +383,51 @@ PIXI.Loader.shared
 
 
 // Build sprite interactions //
+//   -> observer function to track target with eyes
+function trackTargetWithEyes(targetX, targetY) {
+
+  const eyeLeftBounds = char_EyeLeft_Origin.getBounds();
+  const eyeRightBounds = char_EyeRight_Origin.getBounds();
+  const eyesAverageCenter = {
+    x: (eyeLeftBounds.x + eyeRightBounds.x) / 2,
+    y: (eyeLeftBounds.y + eyeRightBounds.y) / 2,
+  };
+
+  const targetVector = {
+    x: targetX - eyesAverageCenter.x,
+    y: targetY - eyesAverageCenter.y,
+  }
+
+  const targetDistance = Math.sqrt(Math.pow(targetVector.x, 2) + Math.pow(targetVector.y, 2));
+  if (targetDistance < 18) return;
+
+  const normalizedVector = {
+    x: targetVector.x / targetDistance,
+    y: targetVector.y / targetDistance,
+  };
+
+  const translation = {
+    x: 16 * normalizedVector.x,
+    y: 7 * normalizedVector.y,
+  }
+
+  char_EyeLeft.position.set(
+    char_EyeLeft_Origin.x + translation.x,
+    char_EyeLeft_Origin.y + translation.y
+  );
+
+  char_EyeRight.position.set(
+    char_EyeRight_Origin.x + translation.x,
+    char_EyeRight_Origin.y + translation.y
+  );
+}
+
 //   => (event) pointerPos -> char hover sprite replacement
 MobX.autorun(() => {
-  const [x, y] = pointerPos;
-  if (Number.isNaN(x)) return;
+  if (Number.isNaN(pointerPos[0])) return;
 
   const charRect = char.getBounds();
-  if (charRect.contains(x, y)) {
+  if (charRect.contains(pointerPos[0], pointerPos[1])) {
     char.texture = idx(PIXI.Loader.shared.resources, _ => _.char.textures['char_hover.png']) || PIXI.Texture.WHITE;
     char.anchor.set(0.5);
     char.position.set(SPRITE_ORIGIN.char.hover.x, SPRITE_ORIGIN.char.hover.y);
@@ -390,12 +440,11 @@ MobX.autorun(() => {
 
 //   => (event) pointerClick -> (state) isWatching: show video player
 MobX.autorun(() => {
-  const [x, y, time, type] = pointerClick;
-  if (Number.isNaN(x)) return;
-  if (!char.getBounds().contains(x, y)) return;
+  if (Number.isNaN(pointerClick[0])) return;
+  if (!char.getBounds().contains(pointerClick[0], pointerClick[1])) return;
 
   //   -> delays video appearance on mobile (a moment to show-off click sprite)
-  if (type !== 'mouse') {
+  if (pointerClick[3] !== 'mouse') {
     char.texture = idx(PIXI.Loader.shared.resources, _ => _.char.textures['char_hover.png']) || PIXI.Texture.WHITE;
     char.anchor.set(0.5);
     char.position.set(SPRITE_ORIGIN.char.hover.x, SPRITE_ORIGIN.char.hover.y);
@@ -406,76 +455,13 @@ MobX.autorun(() => {
   isWatching.set(true);
 });
 
-//   => (event) pointerPos -> track eye to pointer
-// MobX.autorun(() => {
-//   const [x, y, time] = pointerPos;
-//   if (Number.isNaN(x)) return;
+//   => (event) pointerPos, pointerClick -> track eye to pointer
+MobX.autorun(() => {
+  if (Number.isNaN(pointerPos[0]) && Number.isNaN(pointerClick[0])) return;
 
-//   function getEyeDataFromSprite(eye: PIXI.Sprite): TEyeData {
-//     const bounds = eye.getBounds();
-//     return {
-//       x: bounds.x,
-//       y: bounds.y,
-//       width: bounds.width,
-//       height: bounds.height,
-//       center: {
-//         x: bounds.x + bounds.width / 2,
-//         y: bounds.y + bounds.height / 2,
-//       }
-//     };
-//   };
-
-//   function tryTrackingEyes(targetX: number, targetY: number): boolean {
-//     const eyeLeft = getEyeDataFromSprite(char_EyeLeft);
-//     const eyeRight = getEyeDataFromSprite(char_EyeRight);
-
-//     const eyeAveragePos = {
-//       x: (eyeLeft.center.x + eyeRight.center.x) / 2,
-//       y: (eyeLeft.center.y + eyeRight.center.y) / 2,
-//     };
-
-//     const eyesToTarget_Vector = {
-//       x: targetX - eyeAveragePos.x,
-//       y: targetY - eyeAveragePos.y,
-//     };
-//     const eyesToTarget_Distance = Math.sqrt(Math.pow(eyesToTarget_Vector.x, 2) + Math.pow(eyesToTarget_Vector.y, 2));
-
-//     if (eyesToTarget_Distance < 64) {
-//       return false;
-//     } else {
-//       const eyesToTarget_NormalizedVector = {
-//         x: eyesToTarget_Vector.x / eyesToTarget_Distance,
-//         y: eyesToTarget_Vector.y / eyesToTarget_Distance * -1,
-//       };
-
-//       console.dir({
-//         eyesToTarget_Distance,
-//         eyesToTarget_NormalizedVector,
-//       });
-
-//       const eyesPos_New = {
-//         left: [
-//           SPRITE_ORIGIN.eye.left.x + eyesToTarget_NormalizedVector.x,
-//           SPRITE_ORIGIN.eye.left.y + eyesToTarget_NormalizedVector.y,
-//         ],
-//         right: [
-//           SPRITE_ORIGIN.eye.right.x + eyesToTarget_NormalizedVector.x,
-//           SPRITE_ORIGIN.eye.right.y + eyesToTarget_NormalizedVector.y,
-//         ],
-//       };
-
-//       char_EyeLeft.position.set(...eyesPos_New.left);
-//       char_EyeRight.position.set(...eyesPos_New.right);
-      
-//       return true;
-//     }
-//   }
-
-//   if (time < Date.now() + 3333) {
-//     // interrupt auto-look!
-//     if (tryTrackingEyes(x, y))
-//       return;
-//   }
-
-//   // TODO: RANDOM LOOKAROUND!!!
-// });
+  if (pointerPos[2] > pointerClick[2]) {
+    trackTargetWithEyes(pointerPos[0], pointerPos[1]);
+  } else {
+    trackTargetWithEyes(pointerClick[0], pointerClick[1]);
+  }
+});
