@@ -5,8 +5,9 @@ import idx from 'idx';
 import * as MobX from 'mobx';
 import * as PIXI from 'pixi.js';
 import * as AS from 'adaptive-scale';
+import Player from '@vimeo/player';
 
-const IS_DEV = process.env.NODE_ENV === 'development';
+// const IS_DEV = process.env.NODE_ENV === 'development';
 const CANVAS_SIZE = [3200, 2320];
 const SPRITE_ORIGIN = {
   eye: {
@@ -66,10 +67,7 @@ type TTimedPointerClick = [number, number, number, string];
 
 
 
-// Setup state //
-const isLoading = MobX.observable.box(true);
-const isWatching = MobX.observable.box(false);
-
+// Setup event state //
 //   -> utility function to create pure-object viewport
 function createViewport(): IViewport {
   return {
@@ -170,7 +168,10 @@ MobX.autorun(() => updatePixiSize(pixiApp));
 
 
 
-// Setup page and loader //
+// Setup DOM nodes //
+const isLoading = MobX.observable.box(true);
+const isWatching = MobX.observable.box(false);
+
 //   -> get and clear root DOM node
 const root = document.getElementById('root');
 if (!root)
@@ -178,19 +179,65 @@ if (!root)
 see: https://github.com/manniepack/pitching-and-moaning`);
 root.textContent = '';
 
-//   -> create loader and page nodes (unparented)
-const loader = document.createElement('div');
+//   -> create loader node (unparented)
+const loader = document.createElement('section');
 loader.textContent = `...pitching, and moaning...`;
+
+//   -> create page node (unparented)
 const page = document.createElement('section');
+
+//   -> create video player (unparented)
+const videoNode = document.createElement('section');
+videoNode.style.cssText = `
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+`;
+const videoPlayer = new Player(videoNode, {
+  id: 394008834,
+});
+
+//   -> utility function to dismiss video player
+const handleVideoClick = MobX.action((event: PointerEvent) => {
+  videoPlayer.pause();
+  isWatching.set(false);
+});
+
+//   => (event) isLoading, isWatching -> update page's children nodes
+MobX.autorun(() => {
+  page.textContent = '';
+
+  //   -> parent loader element to page and skip the rest
+  if (isLoading.get()) {
+    page.appendChild(loader);
+    return;
+  }
+
+  //   -> parent renderer/canvas element to page
+  page.appendChild(pixiApp.renderer.view);
+
+  //   -> parent video element to page
+  if (isWatching.get())
+    page.appendChild(videoNode);
+});
 
 //   => (event) isLoading change -> compute new page styles
 MobX.autorun(() => {
   const loading = isLoading.get();
+  const watching = isWatching.get();
+
   page.style.cssText = `
+    position: relative;
     width: 100vw;
     height: 100vh;
-    background-color: ${loading ? 'black' : 'white'};
-    color: ${loading ? 'white' : 'black'};
+    background-color: ${loading || watching ? 'black' : 'white'};
+    color: ${loading || watching ? 'white' : 'black'};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -199,24 +246,8 @@ MobX.autorun(() => {
   `;
 });
 
-//   => (event) isLoading change -> update children nodes
-MobX.autorun(() => {
-  page.textContent = '';
-
-  if (isLoading.get()) {
-    // parent loader element to page
-    page.appendChild(loader);
-    return;
-  }
-
-  // parent loader element to page
-  page.appendChild(pixiApp.renderer.view);
-
-  if (isWatching.get()) {
-    // parent video to page
-    console.log('now watching!');
-  }
-});
+//   -> (event) click -> hide video if clicked outside
+videoNode.addEventListener('pointerdown', handleVideoClick);
 
 //   -> parent page element to root node
 root.appendChild(page);
@@ -316,9 +347,9 @@ PIXI.Loader.shared
     frame.anchor.set(0.5);
     frame.position.set(1599.50, 1130.50);
 
-    // any texture that wasn't found was set to
-    // white for now- let's handle that in the
-    // future!
+    // -> any texture that wasn't found was set to
+    //    white for now- let's handle that in the
+    //    future!
 
     pixiApp.stage.addChild(
       cosmicBackgroundRadiation,
@@ -340,7 +371,7 @@ PIXI.Loader.shared
 
 
 // Build sprite interactions //
-//   -> character hover interaction (pointerPos)
+//   => (event) pointerPos -> char hover sprite replacement
 MobX.autorun(() => {
   const [x, y] = pointerPos;
   if (Number.isNaN(x)) return;
@@ -357,26 +388,25 @@ MobX.autorun(() => {
   }
 });
 
-//   -> character click interaction (pointerPos, isWatching)
+//   => (event) pointerClick -> (state) isWatching: show video player
 MobX.autorun(() => {
   const [x, y, time, type] = pointerClick;
   if (Number.isNaN(x)) return;
+  if (!char.getBounds().contains(x, y)) return;
 
-  if (!char.getBounds().contains(x, y))
-    return;
-
-  if (type === 'mouse') {
-    isWatching.set(true);
+  //   -> delays video appearance on mobile (a moment to show-off click sprite)
+  if (type !== 'mouse') {
+    char.texture = idx(PIXI.Loader.shared.resources, _ => _.char.textures['char_hover.png']) || PIXI.Texture.WHITE;
+    char.anchor.set(0.5);
+    char.position.set(SPRITE_ORIGIN.char.hover.x, SPRITE_ORIGIN.char.hover.y);
+    window.setTimeout(() => isWatching.set(true), 1232);
     return;
   }
 
-  char.texture = idx(PIXI.Loader.shared.resources, _ => _.char.textures['char_hover.png']) || PIXI.Texture.WHITE;
-  char.anchor.set(0.5);
-  char.position.set(SPRITE_ORIGIN.char.hover.x, SPRITE_ORIGIN.char.hover.y);
-
-  window.setTimeout(() => isWatching.set(true), 2323);
+  isWatching.set(true);
 });
 
+//   => (event) pointerPos -> track eye to pointer
 // MobX.autorun(() => {
 //   const [x, y, time] = pointerPos;
 //   if (Number.isNaN(x)) return;
