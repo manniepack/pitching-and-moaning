@@ -23,14 +23,14 @@
     "url": "https://github.com/manniepack/pitching-and-moaning/issues"
   },
   "scripts": {
-    "clean": "shx --verbose rm -Rf ./dist",
+    "clean": "shx --verbose rm -Rf ./{.cache,dist}/",
     "sprites": "node ./utils/generateSprites.js",
     "prestart": "npm run clean && npm run sprites",
     "start": "parcel ./src/index.html -d ./dist/ --port 3000",
     "prebuild": "npm run prestart",
-    "build": "parcel build ./src/index.html -d ./dist/",
+    "build": "parcel build ./src/index.html --no-source-maps --public-url ./ -d ./dist/",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
+    "deploy": "gh-pages -d ./dist/",
     "test": "echo \"No tests created\""
   },
   "dependencies": {
