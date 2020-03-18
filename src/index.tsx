@@ -384,7 +384,7 @@ PIXI.Loader.shared
 
 // Build sprite interactions //
 //   -> observer function to track target with eyes
-function trackTargetWithEyes(targetX, targetY) {
+function trackTargetWithEyes(targetX: number, targetY: number) {
 
   const eyeLeftBounds = char_EyeLeft_Origin.getBounds();
   const eyeRightBounds = char_EyeRight_Origin.getBounds();
