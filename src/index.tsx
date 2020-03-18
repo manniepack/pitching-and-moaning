@@ -383,6 +383,25 @@ PIXI.Loader.shared
 
 
 // Build sprite interactions //
+const waveTime = MobX.observable([
+  {
+    value: 0,
+    change: 0.0035,
+  }, 
+  {
+    value: 0,
+    change: 0.0037,
+  }, 
+  {
+    value: 0,
+    change: 0.0125,
+  }, 
+  {
+    value: 0,
+    change: 0.0175,
+  },
+]);
+
 //   -> utility function to track position with character's eyes
 function trackTargetWithEyes(targetX: number, targetY: number) {
 
@@ -446,6 +465,33 @@ function trackRandomlyWithEyes() {
 
   trackTargetWithEyes(randomPos.x, randomPos.y);
 }
+
+//   -> bind waveTime to ticker
+pixiApp.ticker.add(MobX.action(() => {
+  const delta = PIXI.Ticker.shared.deltaTime;
+
+  for (let index = 0; index < waveTime.length; index++) {
+    let newTime = (waveTime[index].change * delta) + waveTime[index].value;
+    newTime = newTime > PIXI.PI_2 ? 0 : newTime;
+  
+    waveTime[index].value = newTime;
+  }
+}), PIXI.UPDATE_PRIORITY.LOW);
+
+//   => (event) waveTime -> update wave position
+MobX.autorun(() => {
+  waves[0].position.y += 0.23 * Math.sin(waveTime[0].value);
+  waves[0].rotation = 0.01250 * Math.sin(waveTime[0].value);
+
+  waves[1].position.y += 0.1 * Math.cos(waveTime[1].value);
+  waves[1].rotation = 0.0125 * Math.sin(waveTime[1].value);
+
+  waves[2].position.y += 0.3 * Math.sin(waveTime[2].value);
+  waves[2].rotation = 0.0225 * Math.sin(waveTime[2].value);
+
+  waves[3].position.y += 0.2 * Math.sin(waveTime[3].value);
+  waves[3].rotation = 0.0300 * Math.sin(waveTime[3].value);
+});
 
 //   => (event) pointerPos -> char hover sprite replacement
 MobX.autorun(() => {
