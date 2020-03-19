@@ -1,4 +1,4 @@
-##### @manniepack + Eavesdrop Media
+##### @manniepack + Evesdrop Media
 # Pitching and Moaning 🧠
 
 ## Usage
