@@ -2,105 +2,93 @@ const fs = require('fs');
 const Path = require('path');
 const spritesheet = require('spritesheet-js');
 
-const ASSETS = Path.join(process.env.PWD, './design/poster-graphic_v1-assets');
-const EXPORT = Path.join(process.env.PWD, './public/assets');
-
-const clearExportLocation = async () => {
-  return new Promise((resolve, reject) => {
-    fs.rmdir(EXPORT, { recursive: true }, err => {
-        if (err) reject(err);
-        resolve();
-      });
-  });
+const PATHS = {
+  ASSETS: Path.join(process.env.PWD, './design/poster-graphic_v1-assets'),
+  EXPORT: Path.join(process.env.PWD, './public/assets'),
 };
 
-const genSpritesheet = async (name, files, hq=false) => {
-  const options = {
+const ASSETS = {
+  spritesheets: [
+    { waves: 'wave*.png' },
+    { char: '{char,eye}*.png' },
+    { lightning: 'lightning*.png' },
+  ],
+  loose: [
+    'frame.png',
+    'sky.png',
+  ],
+};
+
+async function clearExports() {
+
+  return new Promise((res, rej) => {
+    fs.rmdir(PATHS.EXPORT, { recursive: true }, (err) => {
+      if (err) rej(err);
+
+      console.log('Deleted previous export location (if any)');
+
+      fs.mkdir(PATHS.EXPORT, { recursive: true }, (err) => {
+        if (err) rej(err);
+
+        console.log('Recreated empty, assets export location');
+        res(PATHS.EXPORT);
+      });
+    });
+  });
+}
+
+async function generateSpritesheet(name, glob) {
+
+  const source = Path.join(PATHS.ASSETS, glob);
+
+  name = `spritesheet_${name}`;
+  const sjsOptions = {
     name,
-    path: Path.join(EXPORT, hq ? '/hq' : ''),
-    format: 'json',
+    path: PATHS.EXPORT,
     powerOfTwo: true,
   };
-  const path = Path.join(ASSETS, hq ? '/hq' : '', files);
-  const details = {
-    input: path,
-    ...options,
-  };
 
-  return new Promise((resolve, reject) => {
-    spritesheet(path, options, err => {
-      if (err) reject({ err, details });
-      resolve(details);
-    })
+  return new Promise((res, rej) => {
+    spritesheet(source, sjsOptions, (err) => {
+      if (err) rej(err);
+
+      console.log(`Generated: '${name}' from ${source}\n     -> ${sjsOptions.path}/${sjsOptions.name}.json`);
+      res({ source, ...sjsOptions });
+    });
   });
-};
+}
 
-const copyAsset = async (file, hq=false) => {
-  return new Promise((resolve, reject) => {
-    const source = Path.join(ASSETS, hq ? '/hq' : '', file);
-    const target = Path.join(EXPORT, hq ? '/hq' : '', file);
-    const details = { source, target };
+async function copyAsset(asset) {
 
-    fs.copyFile(source, target, err => {
-      if (err) reject({ err, details });
-      resolve(details);
-    })
+  const source = Path.join(PATHS.ASSETS, asset);
+  const dest = Path.join(PATHS.EXPORT, asset);
+
+  return new Promise((res, rej) => {
+    fs.copyFile(source, dest, (err) => {
+      if (err) rej(err);
+
+      console.log(`Copied: ${source}\n     -> ${dest}`);
+      res(dest);
+    });
   });
-};
+}
 
 async function run() {
-  try {
-    const start = Date.now();
 
-    //
-    // Delete export directory
-    //
-    await clearExportLocation();
-    console.log(`Deleted ${EXPORT}\n`);
+  await clearExports();
 
-    //
-    // Generate spritesheets
-    //
-    const ss_waves = await genSpritesheet('spritesheet_waves', 'wave*.png');
-    console.log(`Generated spritesheet '${ss_waves.name}.json' at:\n    -> ${ss_waves.path}`);
-    const ss_waves_hq = await genSpritesheet('spritesheet_waves', 'wave*.png', true);
-    console.log(`Generated HQ spritesheet '${ss_waves_hq.name}.json' at:\n    -> ${ss_waves_hq.path}`);
+  for (let spritesheet of ASSETS.spritesheets) {
+    const name = Object.keys(spritesheet)[0];
+    const glob = spritesheet[name];
+    generateSpritesheet(name, glob);
+  }
 
-    console.log();
-
-    const ss_char = await genSpritesheet('spritesheet_char', '{char,eye}*.png');
-    console.log(`Generated spritesheet '${ss_char.name}.json' at:\n    -> ${ss_char.path}`);
-    const ss_char_hq = await genSpritesheet('spritesheet_char', '{char,eye}*.png', true);
-    console.log(`Generated HQ spritesheet '${ss_char_hq.name}.json' at:\n    -> ${ss_char_hq.path}`);
-
-    console.log();
-
-    const ss_lightning = await genSpritesheet('spritesheet_lightning', 'lightning*.png');
-    console.log(`Generated spritesheet '${ss_lightning.name}.json' at:\n    -> ${ss_lightning.path}`);
-    const ss_lightning_hq = await genSpritesheet('spritesheet_lightning', 'lightning*.png', true);
-    console.log(`Generated HQ spritesheet '${ss_lightning_hq.name}.json' at:\n    -> ${ss_lightning_hq.path}`);
-
-    console.log();
-
-    //
-    // Copy loose assets
-    //
-    const frame = await copyAsset('frame.png');
-    console.log(`Copied: ${frame.source}\n    -> ${frame.target}`);
-    const frame_hq = await copyAsset('frame.png', true);
-    console.log(`Copied HQ: ${frame_hq.source}\n    -> ${frame_hq.target}`);
-
-    const sky = await copyAsset('sky.png');
-    console.log(`Copied: ${sky.source}\n    -> ${sky.target}`);
-    const sky_hq = await copyAsset('sky.png', true);
-    console.log(`Copied HQ: ${sky_hq.source}\n    -> ${sky_hq.target}`);
-
-    console.log();
-
-    const elapsed = Date.now() - start;
-    console.log(`Packed and shipped assets in ${elapsed}ms`);
-  } catch (err) {
-    throw err;
+  for (let asset of ASSETS.loose) {
+    try {
+      copyAsset(asset);
+    } catch (e) {
+      throw e;
+    }
   }
 }
 
